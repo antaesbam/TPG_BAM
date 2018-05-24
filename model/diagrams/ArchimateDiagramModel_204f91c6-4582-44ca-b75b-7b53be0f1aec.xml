@@ -299,7 +299,7 @@
       <children
           xsi:type="archimate:DiagramModelArchimateObject"
           id="188fbe2f-af25-4c56-9815-03c154658858"
-          targetConnections="94f661d1-ecf7-443e-a6b6-8965acfce668">
+          targetConnections="94f661d1-ecf7-443e-a6b6-8965acfce668 c1cd1908-9e77-458a-afb0-9e2be78d1b92">
         <sourceConnections
             xsi:type="archimate:DiagramModelArchimateConnection"
             id="cf4fd976-6437-4005-85b4-3e4cd1584fae"
@@ -859,6 +859,21 @@
         x="1344"
         y="1008"
         width="144"
+        height="80"/>
+  </children>
+  <children
+      xsi:type="archimate:DiagramModelNote"
+      id="d42f7481-c3c4-457e-92ad-a4bb9a0a250b"
+      textAlignment="1"
+      content="Hébergement EC2 custom">
+    <sourceConnections
+        id="c1cd1908-9e77-458a-afb0-9e2be78d1b92"
+        source="d42f7481-c3c4-457e-92ad-a4bb9a0a250b"
+        target="188fbe2f-af25-4c56-9815-03c154658858"/>
+    <bounds
+        x="780"
+        y="119"
+        width="185"
         height="80"/>
   </children>
 </archimate:ArchimateDiagramModel>
