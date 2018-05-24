@@ -698,4 +698,15 @@
         width="185"
         height="80"/>
   </children>
+  <children
+      xsi:type="archimate:DiagramModelNote"
+      id="c5b3d134-a822-428f-b342-e4242bf74158"
+      textAlignment="1"
+      content="test pm&#xA;">
+    <bounds
+        x="588"
+        y="15"
+        width="185"
+        height="34"/>
+  </children>
 </archimate:ArchimateDiagramModel>
