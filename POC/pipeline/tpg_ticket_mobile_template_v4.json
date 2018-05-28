@@ -1,0 +1,44 @@
+PUT _template/tpg_mobile_tickets_template
+{
+  "index_patterns": "tpg_mobile_tickets*",
+  "settings": {
+    "number_of_shards": 1
+  },
+  "mappings": {
+    "tpg_sms": {
+      "properties": {
+        "date": {
+          "type": "date",
+          "format": "yyyy-MM-dd HH:mm:ss.SSS"
+        },
+        "phone": {
+          "type": "keyword"
+        },
+        "theme": {
+          "type": "keyword"
+        },
+        "cost": {
+          "type": "float"
+        },
+        "currency": {
+          "type": "keyword"
+        },
+        "delivery_status": {
+          "type": "keyword"
+        },
+        "error_code": {
+          "type": "integer"
+        },
+        "error_reason": {
+          "type": "keyword"
+        },
+        "error_message": {
+          "type": "text"
+        },
+        "operator": {
+          "type": "text"
+        }
+      }
+    }
+  }
+}

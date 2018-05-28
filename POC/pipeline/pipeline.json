@@ -1,0 +1,70 @@
+POST _ingest/pipeline/_simulate
+{
+  "pipeline" :
+  {
+    "description": "tpg csv ingestion",
+    "processors": [
+      {
+        "grok": {
+         "field": "message",
+         "patterns": [
+           "%{TIMESTAMP_TPG:date},%{DATA:phone},%{DATA:theme},\"%{DATA:cost}\",%{DATA:currency},%{WORD:delivery_status}([|]%{DELIVERY_ERROR_CODE_TPG:error_code})?([|]%{DELIVERY_ERROR_REASON_TPG:error_reason})?([|]%{DELIVERY_ERROR_MESSAGE_TPG:error_message})?,%{WORD:operator}"
+         ],
+         "pattern_definitions": {
+          "SECOND_TPG": "(?:(?:[0-5]?[0-9]|60)(?:[:.,][0-9]+)?)[+-](0[0-9])?",
+          "TIMESTAMP_TPG": "(%{YEAR}-%{MONTHNUM}-%{MONTHDAY}[T ]%{HOUR}:?%{MINUTE}(?::?%{SECOND_TPG}))?",
+          "DELIVERY_STATUS_TPG": "((%{WORD})([|]?(%{WORD}[ -]?))*)?",
+          "DELIVERY_ERROR_CODE_TPG": "%{INT}",
+          "DELIVERY_ERROR_MESSAGE_TPG": "(%{WORD}[ -]+)+",
+          "DELIVERY_ERROR_REASON_TPG": "rejected"
+        }
+       }
+      },
+      {
+        "remove": {
+          "field": "message"
+        }
+      },
+      {
+        "set": {
+          "field": "_type",
+          "value": "tpg_sms"
+        }
+      },
+      {
+        "set": {
+          "field": "_index",
+          "value": "tpg_mobile_tickets"
+        }
+      }
+    ]
+  },
+  "docs": [
+    {"_source": {
+  "@timestamp": "2017-11-09T15:04:41.382Z",
+  "beat": {
+    "hostname": "macphil1-XPS-15-9560",
+    "name": "macphil1-XPS-15-9560",
+    "version": "5.6.1"
+  },
+  "input_type": "log",
+  "message": "2015-01-09 12:53:00.192+01,41763428153,TPG2,\"424442,00\",CHF,failed|22|Subscriber does not have sufficient Balance",
+  "offset": 4266843,
+  "source": "/home/macphil1/elastic/tpg/SMS-echantillon-2015-01.csv",
+  "type": "log"
+}},
+  {"_source": {
+  "@timestamp": "2017-11-09T15:04:41.382Z",
+  "beat": {
+    "hostname": "macphil1-XPS-15-9560",
+    "name": "macphil1-XPS-15-9560",
+    "version": "5.6.1"
+  },
+  "input_type": "log",
+  "message": "2015-01-09 12:53:02.473+01,41786971171,TPG1,\"3,00\",CHF,failed|rejected|22-prepaid amount limit reached",
+  "offset": 4266908,
+  "source": "/home/macphil1/elastic/tpg/SMS-echantillon-2015-01.csv",
+  "type": "log"
+}}
+  ]
+}
