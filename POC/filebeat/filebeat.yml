@@ -1,0 +1,24 @@
+filebeat.prospectors:
+- input_type: log
+  paths:
+    - /home/macphil1/elastic/tpg/*.csv
+    
+  # Ignore the first line with column headings
+  exclude_lines: ["^date,phone,theme,cost,currency,delivery_status"]
+
+
+
+#================================ Outputs =====================================
+
+output.elasticsearch:
+  # Array of hosts to connect to.
+  hosts: ["esc7.antaes.ch:9200"]
+  pipeline: "tpgmobilebuy"
+  template.name: "filebeat"
+  template.path: "filebeat.template.json"
+  template.overwrite: false
+  "username": "tpg_ingest"
+  "password": "tpg_ingest"
+
+#output.console:
+#  pretty: true

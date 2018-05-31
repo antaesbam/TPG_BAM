@@ -1,0 +1,16 @@
+POST tpg_mobile_tickets/tpg_sms/_delete_by_query
+{
+  "query": {
+    "constant_score": {
+      "filter": {
+        "range": {
+          "@timestamp": {
+            "gt": "2014-01-01",
+            "lt": "2017-01-01"
+          }
+        }
+      },
+      "boost": 1.2
+    }
+  }
+}
