@@ -1,0 +1,96 @@
+POST _ingest/pipeline/_simulate
+{
+  "pipeline" :
+  {
+    "description": "tpg csv ingestion",
+    "processors": [
+      {
+        "grok": {
+          "field": "message",
+          "patterns": ["%{TIMESTAMP_TPG:messdate}[+-](0[0-9])?;%{DATA:phone}(;%{ACTIONS_TPG:action})?;%{DATA:theme};%{DATA:cost};%{DATA:currency};(%{WORD:delivery_status}(([|]%{INT:error_code})|([|]%{WORD:error_reason}))?([|]%{DELIVERY_ERROR_MESSAGE_TPG:error_message})?)?(;%{WORD:operator})?"],
+          "pattern_definitions": {
+            "SECOND_TPG": "((?:(?:[0-5]?[0-9]|60)(?:[:.,][0-9]+)?))",
+            "TIMESTAMP_TPG": "(%{YEAR}-%{MONTHNUM}-%{MONTHDAY}[T ]%{HOUR}:?%{MINUTE}(?::?%{SECOND_TPG}))?",
+            "DELIVERY_STATUS_TPG": "((%{WORD})([|]?(%{WORD}[ -]?))*)?",
+            "DELIVERY_ERROR_CODE_TPG": "%{INT}",
+            "DELIVERY_ERROR_MESSAGE_TPG": "(%{WORD}[ -]+)+",
+            "DELIVERY_ERROR_REASON_TPG": "rejected",
+            "ACTIONS_TPG": "GET|BILLRESERVEERROR|UNKNOWN|PUSH|WEBSEND|INFO|BLOCKED_PREPAID_CREDIT|UNSUBSCRIBEALL"
+          }
+        }
+      },
+      {
+        "gsub": {
+          "field": "cost",
+          "pattern": ",",
+          "replacement": "."
+        }
+      },
+      {
+        "date" : {
+          "field" : "messdate",
+          "formats" : ["yyyy-MM-dd HH:mm:ss.SSS"],
+          "timezone" : "Europe/Amsterdam"
+        }
+      },
+      {
+        "remove": {
+          "field": "message"
+        }
+      },
+      {
+        "set": {
+          "field": "_type",
+          "value": "tpg_sms"
+        }
+      },
+      {
+        "set": {
+          "field": "_index",
+          "value": "tpg_mobile_tickets"
+        }
+      }
+    ]
+  },
+  "docs": [
+    {"_source": {
+      "@timestamp": "2017-12-14T15:39:05.197Z",
+      "beat": {
+        "hostname": "macphil1-XPS-15-9560",
+        "name": "macphil1-XPS-15-9560",
+        "version": "5.6.1"
+      },
+      "input_type": "log",
+      "message": "2016-07-01 14:27:02.197+02;+41788838788;TPG1;3.0;CHF;delivered",
+      "offset": 499292,
+      "source": "/home/macphil1/elastic/tpg/SMS-Tickets-2016S2.csv",
+      "type": "log"
+    }},
+    {"_source": {
+      "@timestamp": "2017-11-09T15:04:41.382Z",
+      "beat": {
+        "hostname": "macphil1-XPS-15-9560",
+        "name": "macphil1-XPS-15-9560",
+        "version": "5.6.1"
+      },
+      "input_type": "log",
+      "message": "2017-11-25 07:23:00.938+01;+41786464592;GET;TPG1;300;CHF;delivered;orange",
+      "offset": 4266843,
+      "source": "/home/macphil1/elastic/tpg/SMS-echantillon-2015-01.csv",
+      "type": "log"
+    }},
+    {"_source": {
+      "@timestamp": "2017-11-09T15:04:41.382Z",
+      "beat": {
+        "hostname": "macphil1-XPS-15-9560",
+        "name": "macphil1-XPS-15-9560",
+        "version": "5.6.1"
+      },
+      "input_type": "log",
+      "message": "2015-01-09 12:53:02.473+01;41786971171;TPG1;\"3,00\";CHF;failed|rejected|22-prepaid amount limit reached;orange",
+      "offset": 4266908,
+      "source": "/home/macphil1/elastic/tpg/SMS-echantillon-2015-01.csv",
+      "type": "log"
+    }}
+  ]
+}

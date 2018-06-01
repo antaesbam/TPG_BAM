@@ -1,0 +1,49 @@
+POST _ingest/pipeline/tpgmobilebuy
+{
+  "pipeline" :
+  {
+    "description": "tpg csv ingestion",
+    "processors": [
+      {
+        "grok": {
+         "field": "message",
+         "patterns": [
+           "%{TIMESTAMP_TPG:date},%{DATA:phone}(,%{ACTIONS_TPG:action})?,%{DATA:theme},((\"%{DATA:cost}\")|(%{DATA:cost})),%{DATA:currency},%{WORD:delivery_status}([|]%{DELIVERY_ERROR_CODE_TPG:error_code})?([|]%{DELIVERY_ERROR_REASON_TPG:error_reason})?([|]%{DELIVERY_ERROR_MESSAGE_TPG:error_message})?,?%{WORD:operator}"
+         ],
+         "pattern_definitions": {
+          "SECOND_TPG": "(?:(?:[0-5]?[0-9]|60)(?:[:.,][0-9]+)?)[+-](0[0-9])?",
+          "TIMESTAMP_TPG": "(%{YEAR}-%{MONTHNUM}-%{MONTHDAY}[T ]%{HOUR}:?%{MINUTE}(?::?%{SECOND_TPG}))?",
+          "DELIVERY_STATUS_TPG": "((%{WORD})([|]?(%{WORD}[ -]?))*)?",
+          "DELIVERY_ERROR_CODE_TPG": "%{INT}",
+          "DELIVERY_ERROR_MESSAGE_TPG": "(%{WORD}[ -]+)+",
+          "DELIVERY_ERROR_REASON_TPG": "rejected",
+          "ACTIONS_TPG": "GET|BILLRESERVEERROR|UNKNOWN|PUSH|WEBSEND|INFO|BLOCKED_PREPAID_CREDIT|UNSUBSCRIBEALL"
+        }
+       }
+      },
+      {
+        "remove": {
+          "field": "message"
+        }
+      },
+      {
+        "set": {
+          "field": "_type",
+          "value": "tpg_sms"
+        }
+      },
+      {
+        "set": {
+          "field": "_index",
+          "value": "tpg_mobile_tickets"
+        }
+      }
+    ]
+  },
+  "on_failure": [{
+    "set": {
+      "field" : "error",
+      "value" : "bad tpg mobile message"
+    }
+  }]
+}

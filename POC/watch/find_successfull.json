@@ -1,0 +1,30 @@
+PUT _xpack/watcher/watch/find_successfull
+{
+  "trigger" : {
+    "schedule" : { "interval" : "10s" }
+  },
+  "input" : {
+    "search" : {
+      "request" : {
+        "indices" : [ "tpg_mobile_tickets" ],
+        "body" : {
+          "query" : {
+            "match" : { "delivery_status": "delivered" }
+          }
+        }
+      }
+    }
+  },
+  "condition" : {
+    "compare" : { "ctx.payload.hits.total" : { "gt" : 10 }}
+  },
+  "actions" : {
+    "send_email" : {
+      "email" : {
+        "to" : "philippe.mondon.antaes@gmail.com",
+        "subject" : "Messages delivery",
+        "body" : "successfull"
+      }
+    }
+  }
+}
