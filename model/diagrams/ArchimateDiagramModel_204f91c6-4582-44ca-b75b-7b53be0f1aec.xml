@@ -876,4 +876,28 @@
         width="185"
         height="80"/>
   </children>
+  <children
+      xsi:type="archimate:DiagramModelArchimateObject"
+      id="e398d93c-9689-4cd8-91d2-97f3969f1070">
+    <bounds
+        x="996"
+        y="36"
+        width="120"
+        height="55"/>
+    <archimateElement
+        xsi:type="archimate:BusinessRole"
+        href="BusinessRole_2b5a4a1a-d6c2-4363-8b01-09866b6f1f4d.xml#2b5a4a1a-d6c2-4363-8b01-09866b6f1f4d"/>
+  </children>
+  <children
+      xsi:type="archimate:DiagramModelArchimateObject"
+      id="31b19e74-6c06-4b1f-b1eb-4c665d1e3275">
+    <bounds
+        x="1056"
+        y="119"
+        width="120"
+        height="55"/>
+    <archimateElement
+        xsi:type="archimate:BusinessProcess"
+        href="BusinessProcess_b9caaa3e-eb61-4cfc-ac7d-6a5b9f0ba1cd.xml#b9caaa3e-eb61-4cfc-ac7d-6a5b9f0ba1cd"/>
+  </children>
 </archimate:ArchimateDiagramModel>
