@@ -1,7 +1,7 @@
 filebeat.prospectors:
 - input_type: log
   paths:
-    - /home/macphil1/elastic/tpg/*.csv
+    - /Users/macphil1/Downloads/filebeat-6.2.4-darwin-x86_64/sms/*.csv
     
   # Ignore the first line with column headings
   exclude_lines: ["^date,phone,theme,cost,currency,delivery_status"]

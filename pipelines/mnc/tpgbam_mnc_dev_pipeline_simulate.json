@@ -1,0 +1,110 @@
+POST _ingest/pipeline/_simulate
+{
+  "pipeline" :
+  {
+    "description": "TPGBAM MNC SMS ingestion",
+    "processors": [
+      {
+        "grok": {
+          "field": "message",
+          "patterns": ["%{DATA:uid},%{WORD:channel},%{WORD:business_object},%{SHORT_DATE:as_of},%{DATA:as_of_time},%{DATA:cost},%{WORD:currency},%{WORD:delivery_status},(%{WORD:failed_code})?,(%{WORD:failed_message})?,(%{WORD:failed_reason})?,%{DATA:messdate},%{WORD:operator},%{DATA:phone},%{WORD:theme},%{WORD:delivery_proof}"],
+          "pattern_definitions": {
+            "SHORT_DATE": "%{YEAR}-%{MONTHNUM}-%{MONTHDAY}"
+          }
+        }
+      },
+      {
+        "gsub": {
+          "field": "cost",
+          "pattern": ",",
+          "replacement": "."
+        }
+      },
+      {
+        "date" : {
+          "field" : "messdate",
+          "formats" : ["yyyy-MM-dd HH:mm:ss.SSS+MM"],
+          "timezone" : "Europe/Amsterdam"
+        }
+      },
+      {
+        "remove": {
+          "field": "message"
+        }
+      },
+      {
+        "set": {
+          "field": "_type",
+          "value": "tpg_vente"
+        }
+      },
+      {
+        "set": {
+          "field": "_index",
+          "value": "tpgbam_mnc_dev_index"
+        }
+      }
+    ]
+  },
+  "docs": [
+    {"_source": {
+  "@timestamp": "2018-06-14T07:52:53.633Z",
+  "@metadata": {
+    "beat": "filebeat",
+    "type": "doc",
+    "version": "6.2.4"
+  },
+  "source": "/Users/macphil1/OneDrive/ANTAES/TPG/TPG_BAM_DATA/MNC/V1/2018-06-13T16:06:53_SMS_VENTE.csv",
+  "offset": 2094,
+  "message": "19156476,SMS,VENTE,2018-06-14,05:24:28,3,CHF,delivered,,,,2018-06-14 17:24:28.841+02,swisscom,ANONYMSIZATIONSTILLTOBEDONE,TPG1,SMS",
+  "prospector": {
+    "type": "log"
+  },
+  "beat": {
+    "name": "MacBook-de-Philippe-Mondon.local",
+    "hostname": "MacBook-de-Philippe-Mondon.local",
+    "version": "6.2.4"
+  }
+}},
+    {"_source": {
+  "@timestamp": "2018-06-14T07:52:53.633Z",
+  "@metadata": {
+    "beat": "filebeat",
+    "type": "doc",
+    "version": "6.2.4"
+  },
+  "source": "/Users/macphil1/OneDrive/ANTAES/TPG/TPG_BAM_DATA/MNC/V1/2018-06-13T16:06:53_SMS_VENTE.csv",
+  "offset": 2540,
+  "message": "19156477,SMS,VENTE,2018-06-14,05:24:29,3,CHF,delivered,,,,2018-06-14 17:24:29.105+02,sunrise,ANONYMSIZATIONSTILLTOBEDONE,TPG1,SMS",
+  "prospector": {
+    "type": "log"
+  },
+  "beat": {
+    "name": "MacBook-de-Philippe-Mondon.local",
+    "hostname": "MacBook-de-Philippe-Mondon.local",
+    "version": "6.2.4"
+  }
+}},
+    {"_source": 
+    	{
+  			"@timestamp": "2018-06-14T07:52:53.633Z",
+			"@metadata": {
+    			"beat": "filebeat",
+    			"type": "doc",
+    			"version": "6.2.4"
+  		},
+  		"source": "/Users/macphil1/OneDrive/ANTAES/TPG/TPG_BAM_DATA/MNC/V1/2018-06-13T16:06:53_SMS_VENTE.csv",
+  		"offset": 2391,
+  		"message": "19156517,SMS,VENTE,2018-06-14,05:25:52,3,CHF,delivered,,,,2018-06-14 17:25:52.09+02,orange,ANONYMSIZATIONSTILLTOBEDONE,TPG1,SMS",
+  		"prospector": {
+    		"type": "log"
+  		},
+  		"beat": {
+    	"name": "MacBook-de-Philippe-Mondon.local",
+    	"hostname": "MacBook-de-Philippe-Mondon.local",
+    	"version": "6.2.4"
+  		}
+		}
+    }
+  ]
+}

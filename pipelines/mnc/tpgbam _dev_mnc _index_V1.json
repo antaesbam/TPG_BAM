@@ -1,0 +1,60 @@
+PUT _template/dock_tpg_mobile_tickets_template
+{
+  "index_patterns": "tpgbam_dev_mnc_index*",
+  "settings": {
+    "number_of_shards": 1
+  },
+  "mappings": {
+    "tpg_vente": {
+      "properties": {
+        "messdate": {
+          "type": "date",
+          "format": "yyyy-MM-dd HH:mm:ss.SSS+MM"
+        },
+        "channel": {
+          "type": "keyword"
+        },
+        "business_object": {
+          "type": "keyword"
+        },
+        "as_of": {
+          "type": "date",
+          "format": "yyyy-MM-dd"
+        },
+        "as_of_time": {
+          "type": "text"
+        },
+        "cost": {
+          "type": "float"
+        },
+        "currency": {
+          "type": "keyword"
+        },
+        "delivery_status": {
+          "type": "keyword"
+        },
+        "failed_code": {
+          "type": "integer"
+        },
+        "failed_reason": {
+          "type": "keyword"
+        },
+        "failed_message": {
+          "type": "text"
+        },
+        "phone": {
+          "type": "keyword"
+        },
+        "theme": {
+          "type": "keyword"
+        },
+        "operator": {
+          "type": "text"
+        },
+        "delivery_proof": {
+          "type": "keyword"
+        }
+      }
+    }
+  }
+}
