@@ -1,4 +1,4 @@
-PUT _template/dock_tpg_mobile_tickets_template
+PUT _template/tpgbam_mnc_dev_index_template
 {
   "index_patterns": "tpgbam_dev_mnc_index*",
   "settings": {
@@ -10,6 +10,9 @@ PUT _template/dock_tpg_mobile_tickets_template
         "messdate": {
           "type": "date",
           "format": "yyyy-MM-dd HH:mm:ss.SSS+MM"
+        },
+        "uid": {
+          "type": "text"
         },
         "channel": {
           "type": "keyword"
@@ -33,13 +36,13 @@ PUT _template/dock_tpg_mobile_tickets_template
         "delivery_status": {
           "type": "keyword"
         },
-        "failed_code": {
-          "type": "integer"
-        },
-        "failed_reason": {
+        "error_code": {
           "type": "keyword"
         },
-        "failed_message": {
+        "error_reason": {
+          "type": "keyword"
+        },
+        "error_message": {
           "type": "text"
         },
         "phone": {

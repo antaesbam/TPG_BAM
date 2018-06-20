@@ -5,7 +5,7 @@ PUT _ingest/pipeline/tpgbam_mnc_dev_pipeline
       {
         "grok": {
           "field": "message",
-          "patterns": ["%{DATA:uid},%{WORD:channel},%{WORD:business_object},%{SHORT_DATE:as_of},%{DATA:as_of_time},%{DATA:cost},%{WORD:currency},%{WORD:delivery_status},(%{WORD:failed_code})?,(%{WORD:failed_message})?,(%{WORD:failed_reason})?,%{DATA:messdate},%{WORD:operator},%{DATA:phone},%{WORD:theme},%{WORD:delivery_proof}"],
+          "patterns": ["%{DATA:uid},%{WORD:channel},%{WORD:business_object},%{SHORT_DATE:as_of},%{DATA:as_of_time},%{DATA:cost},%{WORD:currency},%{WORD:delivery_status},%{DATA:error_code},%{DATA:error_message},%{DATA:messdate},%{WORD:operator},%{DATA:phone},%{WORD:theme},%{WORD:delivery_proof}"],
           "pattern_definitions": {
             "SHORT_DATE": "%{YEAR}-%{MONTHNUM}-%{MONTHDAY}"
           }
@@ -42,13 +42,5 @@ PUT _ingest/pipeline/tpgbam_mnc_dev_pipeline
           "value": "tpgbam_dev_mnc_index"
         }
       }
-    ],
-  "on_failure": [
-    {
-      "set": {
-        "field": "error",
-        "value": "BAD TPGBAM MNC SMS MESSAGE"
-      }
-    }
-  ]
+    ]
 }
