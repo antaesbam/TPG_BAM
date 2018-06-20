@@ -30,8 +30,8 @@ post_to_monitoring_index() {
 
 # cloud information
 index='tpgbam_dev_mnc'
-cloud_url='https://416d580d881f24fb8cc3e9be04c9ce89.us-west-2.aws.found.io:9243'
-user='TPG_BAM:antaes*1'
+cloud_url='https://8fb4727ed8b84a938a7f8032d9e73718.eu-central-1.aws.cloud.es.io:9243'
+user='elastic:jqoGKYWqopiMXMPBBMf0Bvij'
 
 # count lines in files
 l=0
@@ -47,23 +47,31 @@ record_type='record_count'
 provider='mnc'
 index_post_response=''
 
-for f in *.csv
+
+# infinit loop : restart every 5 seconds 
+while : 
 do
-        count_lines $f
-        l=$((l - 1))
-        echo $f $l
-        parse_file_name $f
+        for f in *.csv
+        do
+                count_lines $f
+                l=$((l - 1)) 
+                echo $f $l
+                parse_file_name $f
 
-        echo $f $as_of
+                echo $f $as_of
 
-        echo $f $as_of_time
+                echo $f $as_of_time
 
-        check_ingested
-        echo $f $qr;
+                check_ingested
+                echo $f $qr;
 
-        # get the current date
-        date=`date "+%Y-%m-%dT%H:%M:%S"`
-        echo $date 
-        post_to_monitoring_index
-        echo $index_post_response       
+                # get the current date
+                date=`date "+%Y-%m-%dT%H:%M:%S"`
+                echo $date 
+                post_to_monitoring_index
+                echo $index_post_response       
+        done
+echo "sleep 5"
+echo "-----------------------------"
+sleep 5
 done

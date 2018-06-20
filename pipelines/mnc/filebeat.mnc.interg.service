@@ -1,0 +1,13 @@
+[Unit]
+Description=filebeat
+Documentation=https://www.elastic.co/guide/en/beats/filebeat/current/index.html
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+ExecStart=/usr/share/filebeat/bin/filebeat -e -c /etc/filebeat/filebeat.mnc.integ.yml -path.home /home/mnc -path.config /etc/filebeat -path.data /home/mnc/integregistry -path.logs /home/mnc/log/ -d "elasticsearch"
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+/lib/systemd/system/filebeat.mnc.integ.service (END)

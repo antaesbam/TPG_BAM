@@ -19,10 +19,17 @@ PUT _ingest/pipeline/tpgbam_mnc_dev_pipeline
         }
       },
       {
+        "gsub": {
+          "field": "messdate",
+          "pattern": " ",
+          "replacement": "T"
+        }
+      },
+      {
         "date" : {
           "field" : "messdate",
-          "formats" : ["yyyy-MM-dd HH:mm:ss.SSS+MM"],
-          "timezone" : "Europe/Amsterdam"
+          "formats" : ["ISO8601"],
+          "timezone" : "Europe/Paris"
         }
       },
       {

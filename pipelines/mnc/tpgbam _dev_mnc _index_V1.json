@@ -8,8 +8,7 @@ PUT _template/tpgbam_mnc_dev_index_template
     "tpg_vente": {
       "properties": {
         "messdate": {
-          "type": "date",
-          "format": "yyyy-MM-dd HH:mm:ss.SSS+MM"
+          "type": "date"
         },
         "uid": {
           "type": "text"
