@@ -7,7 +7,7 @@ POST _ingest/pipeline/_simulate
       {
         "grok": {
           "field": "message",
-          "patterns": ["%{DATA:uid},%{WORD:channel},%{WORD:business_object},%{SHORT_DATE:as_of},%{DATA:as_of_time},%{DATA:cost},%{WORD:currency},%{WORD:delivery_status},%{DATA:error_code},%{DATA:error_message},%{DATA:messdate},%{WORD:operator},%{DATA:phone},%{WORD:theme},%{WORD:delivery_proof}"],
+          "patterns": ["%{DATA:uid},%{WORD:channel},%{WORD:business_object},%{SHORT_DATE:as_of},%{DATA:as_of_time},%{DATA:cost},%{WORD:currency},%{WORD:delivery_status},%{DATA:error_code},%{DATA:error_message},%{DATA:messdate},%{WORD:operator},%{DATA:phone},%{DATA:theme},%{WORD:delivery_proof}"],
           "pattern_definitions": {
             "SHORT_DATE": "%{YEAR}-%{MONTHNUM}-%{MONTHDAY}"
           }
@@ -30,6 +30,13 @@ POST _ingest/pipeline/_simulate
       {
         "gsub": {
           "field": "error_message",
+          "pattern": "\"",
+          "replacement": ""
+        }
+      },
+      {
+        "gsub": {
+          "field": "theme",
           "pattern": "\"",
           "replacement": ""
         }
@@ -77,7 +84,7 @@ POST _ingest/pipeline/_simulate
   },
   "source": "/Users/macphil1/OneDrive/ANTAES/TPG/TPG_BAM_DATA/MNC/V1/2018-06-13T16:06:53_SMS_VENTE.csv",
   "offset": 2094,
-  "message": "19227993,SMS,VENTE,2018-06-19,09:37:48,5.6,CHF,delivered,,,2018-06-19 09:24:19.541+02,swisscom,ANONYMSIZATIONSTILLTOBEDONE,CJ92,SMS",
+  "message": "19255464,SMS,VENTE,2018-06-20,15:30:01,0,EUR,sent,,,2018-06-20 15:16:15.612+02,bouygues,ANONYMSIZATIONSTILLTOBEDONE,\"\",SMS",
   "prospector": {
     "type": "log"
   },

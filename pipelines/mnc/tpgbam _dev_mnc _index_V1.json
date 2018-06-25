@@ -2,7 +2,8 @@ PUT _template/tpgbam_mnc_dev_index_template
 {
   "index_patterns": "tpgbam_dev_mnc_index*",
   "settings": {
-    "number_of_shards": 1
+    "number_of_shards": 5, 
+    "number_of_replicas": 2
   },
   "mappings": {
     "tpg_vente": {
@@ -11,7 +12,7 @@ PUT _template/tpgbam_mnc_dev_index_template
           "type": "date"
         },
         "uid": {
-          "type": "text"
+          "type": "keyword"
         },
         "channel": {
           "type": "keyword"
@@ -24,7 +25,8 @@ PUT _template/tpgbam_mnc_dev_index_template
           "format": "yyyy-MM-dd"
         },
         "as_of_time": {
-          "type": "text"
+          "type": "date",
+          "format": "HH:mm:ss"
         },
         "cost": {
           "type": "float"
@@ -51,7 +53,7 @@ PUT _template/tpgbam_mnc_dev_index_template
           "type": "keyword"
         },
         "operator": {
-          "type": "text"
+          "type": "keyword"
         },
         "delivery_proof": {
           "type": "keyword"

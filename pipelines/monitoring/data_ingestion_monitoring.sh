@@ -17,7 +17,7 @@ parse_file_name() {
 }
 
 check_ingested() {
-        qr=`curl --user $user $cloud_url/$index*/_count -d "{ \"query\": {\"bool\": {  \"should\": [ {\"match\": { \"as_of_time\": \"$as_of_time\"}}, {\"match\": { \"as_of\": \"$as_of\"}} ],\"minimum_should_match\": 2 } }}" -H"Content-Type: application/json" | jq -r ".count"`
+        qr=`curl --user $preprod_user $preprod_cloud_url/$index*/_count -d "{ \"query\": {\"bool\": {  \"should\": [ {\"match\": { \"as_of_time\": \"$as_of_time\"}}, {\"match\": { \"as_of\": \"$as_of\"}} ],\"minimum_should_match\": 2 } }}" -H"Content-Type: application/json" | jq -r ".count"`
 }
 
 post_to_monitoring_index() {
@@ -30,8 +30,11 @@ post_to_monitoring_index() {
 
 # cloud information
 index='tpgbam_dev_mnc'
-cloud_url='https://8fb4727ed8b84a938a7f8032d9e73718.eu-central-1.aws.cloud.es.io:9243'
-user='elastic:jqoGKYWqopiMXMPBBMf0Bvij'
+preprod_cloud_url='https://8fb4727ed8b84a938a7f8032d9e73718.eu-central-1.aws.cloud.es.io:9243'
+preprod_user='elastic:jqoGKYWqopiMXMPBBMf0Bvij'
+cloud_url='https://416d580d881f24fb8cc3e9be04c9ce89.us-west-2.aws.found.io:9243'
+user='elastic:5PPjNy8uvv61ogJfMMlhVQZO'
+
 
 # count lines in files
 l=0
@@ -73,5 +76,5 @@ do
         done
 echo "sleep 5"
 echo "-----------------------------"
-sleep 5
+sleep 60 
 done
