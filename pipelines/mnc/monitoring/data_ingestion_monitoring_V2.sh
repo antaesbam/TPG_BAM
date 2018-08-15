@@ -56,7 +56,7 @@ provider='mnc'
 index_post_response=''
 
 
-# infinit loop : restart every 5 seconds 
+# infinit loop : restart every 60 seconds 
 while : 
 do
         for file_ref in *.csv
@@ -79,7 +79,7 @@ do
                 post_to_monitoring_index
                 echo $index_post_response       
         done
-echo "sleep 5"
+echo "sleep 60"
 echo "-----------------------------"
 sleep 60 
 done

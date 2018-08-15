@@ -1,0 +1,64 @@
+PUT _template/tpgbam_mnc_dev_index_template
+{
+  "index_patterns": "tpgbam_dev_mnc_index*",
+  "settings": {
+    "number_of_shards": 5, 
+    "number_of_replicas": 2
+  },
+  "mappings": {
+    "tpg_vente": {
+      "properties": {
+        "messdate": {
+          "type": "date"
+        },
+        "uid": {
+          "type": "keyword"
+        },
+        "channel": {
+          "type": "keyword"
+        },
+        "business_object": {
+          "type": "keyword"
+        },
+        "as_of": {
+          "type": "date",
+          "format": "yyyy-MM-dd"
+        },
+        "as_of_time": {
+          "type": "date",
+          "format": "HH:mm:ss"
+        },
+        "cost": {
+          "type": "float"
+        },
+        "currency": {
+          "type": "keyword"
+        },
+        "delivery_status": {
+          "type": "keyword"
+        },
+        "error_code": {
+          "type": "keyword"
+        },
+        "error_reason": {
+          "type": "keyword"
+        },
+        "error_message": {
+          "type": "text"
+        },
+        "phone": {
+          "type": "keyword"
+        },
+        "theme": {
+          "type": "keyword"
+        },
+        "operator": {
+          "type": "keyword"
+        },
+        "delivery_proof": {
+          "type": "keyword"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+[Unit]
+Description=filebeat
+Documentation=https://www.elastic.co/guide/en/beats/filebeat/current/index.html
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+ExecStart=/home/{{ data_provider }}/admin/data_ingestion_file_rotation_v2.sh
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

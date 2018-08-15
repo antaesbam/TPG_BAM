@@ -1,0 +1,2 @@
+# this is the main variables set for data provider provisionning
+data_provider: "{{ data_provider }}"

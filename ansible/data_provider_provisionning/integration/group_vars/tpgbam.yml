@@ -1,0 +1,9 @@
+ansible_host: 159.100.243.248
+ansible_user: root
+ansible_python_interpreter: /usr/bin/python3
+target_url: 8fb4727ed8b84a938a7f8032d9e73718.eu-central-1.aws.cloud.es.io:9243
+target_user: elastic
+target_password: jqoGKYWqopiMXMPBBMf0Bvij
+target_cloudid: TPG_PREPROD:ZXUtY2VudHJhbC0xLmF3cy5jbG91ZC5lcy5pbyQ4ZmI0NzI3ZWQ4Yjg0YTkzOGE3ZjgwMzJkOWU3MzcxOCQ1YTkxNDY3N2JjODQ0ZDNiOWE0N2YxMDU0Nzc1MWMzZA==
+depenvironment: integ
+
