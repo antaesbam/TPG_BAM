@@ -26,18 +26,18 @@ post_to_monitoring_index() {
         # we set the date before posting
         date=`date "+%Y-%m-%dT%H:%M:%S"`
 
-        index_post_response=`curl -XPOST -H"Content-Type: application/json" --user $monitoring_platform_url $monitoring_platform_url/$monitoring_index/$record_type -d "{ \"provider\": \"$provider\", \"date\": \"$date\", \"index\": \"$index\",\"file\": \"$f\",\"as_of\": \"$as_of\", \"as_of_time\": \"$as_of_time\", \"num_in_file\": $lines_in_files, \"num_in_index\": $qr}"`
+        index_post_response=`curl -XPOST -H"Content-Type: application/json" --user $monitoring_platform_user $monitoring_platform_url/$monitoring_index/$record_type -d "{ \"provider\": \"$provider\", \"date\": \"$date\", \"index\": \"$index\",\"file\": \"$f\",\"as_of\": \"$as_of\", \"as_of_time\": \"$as_of_time\", \"num_in_file\": $lines_in_files, \"num_in_index\": $qr}"`
 
 }
 
 # monitored platform
 src_index='tpgbam_{{ depenvironment }}_{{ data_provider }}'
-src_platform_url='https://8fb4727ed8b84a938a7f8032d9e73718.eu-central-1.aws.cloud.es.io:9243'
-src_platform_user='elastic:jqoGKYWqopiMXMPBBMf0Bvij'
+src_platform_url='https://{{ target_url }}'
+src_platform_user='{{ target_user }}:{{ target_password }}'
 
 # monitoring platform
-monitoring_platform_url='https://416d580d881f24fb8cc3e9be04c9ce89.us-west-2.aws.found.io:9243'
-monitoring_platform_user='elastic:5PPjNy8uvv61ogJfMMlhVQZO'
+monitoring_platform_url='https://{{ monitoring_url }}'
+monitoring_platform_user='{{ monitoring_user }}:{{ monitoring_password }}'
 
 # count lines in files
 lines_in_files=0

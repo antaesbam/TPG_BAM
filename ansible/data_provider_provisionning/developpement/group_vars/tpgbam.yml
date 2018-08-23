@@ -1,13 +1,15 @@
 ansible_host: 159.100.243.248
 ansible_user: root
 ansible_python_interpreter: /usr/bin/python3
-target_url: 8fb4727ed8b84a938a7f8032d9e73718.eu-central-1.aws.cloud.es.io:9243
+# Defines the terget server to host events indexes
+target_url: 416d580d881f24fb8cc3e9be04c9ce89.us-west-2.aws.found.io:9243
 target_user: elastic
-target_password: jqoGKYWqopiMXMPBBMf0Bvij
-target_cloudid: TPG_PREPROD:ZXUtY2VudHJhbC0xLmF3cy5jbG91ZC5lcy5pbyQ4ZmI0NzI3ZWQ4Yjg0YTkzOGE3ZjgwMzJkOWU3MzcxOCQ1YTkxNDY3N2JjODQ0ZDNiOWE0N2YxMDU0Nzc1MWMzZA==
+target_password: 5PPjNy8uvv61ogJfMMlhVQZO
+target_cloudid: TPG_BAM:dXMtd2VzdC0yLmF3cy5mb3VuZC5pbyQ0MTZkNTgwZDg4MWYyNGZiOGNjM2U5YmUwNGM5Y2U4OSRmYTQ3NDhlZjkxNjYzMmQ1ZmViMjZmMTM3YjIwYmE1Nw==
 monitoring_url: 416d580d881f24fb8cc3e9be04c9ce89.us-west-2.aws.found.io:9243
 monitoring_user: elastic
 monitoring_password: 5PPjNy8uvv61ogJfMMlhVQZO
 monitoring_cloudid: TPG_BAM:dXMtd2VzdC0yLmF3cy5mb3VuZC5pbyQ0MTZkNTgwZDg4MWYyNGZiOGNjM2U5YmUwNGM5Y2U4OSRmYTQ3NDhlZjkxNjYzMmQ1ZmViMjZmMTM3YjIwYmE1Nw==
-depenvironment: integ
+# Mainly used to name files
+depenvironment: dev
 

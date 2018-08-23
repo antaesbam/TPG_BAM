@@ -1,0 +1,133 @@
+PUT _template/tpgbam_mnc_dev_index_template
+{
+  "index_patterns": "tpgbam_scs_dev_index*",
+  "settings": {
+    "number_of_shards": 5, 
+    "number_of_replicas": 2
+  },
+  "mappings": {
+    "tpg_vente": {
+      "properties": {
+      	"channel": {
+          "type": "keyword"
+        },
+        "uid": {
+          "type": "keyword"
+        },
+        "business_object": {
+          "type": "keyword"
+        },
+        "as_of_time": {
+          "type": "date",
+          "format": "HH:mm:ss"
+        },
+        "as_of": {
+          "type": "date",
+          "format": "yyyy-MM-dd"
+        },
+        "cost": {
+          "type": "float"
+        },
+        "delivery_status": {
+          "type": "keyword"
+        },
+        "messdate": {
+          "type": "date"
+        },
+        "terminal_id": {
+          "type": "keyword"
+        },
+        "terminal_location_id": {
+          "type": "keyword"
+        },
+        "terminal_location_name": {
+          "type": "keyword"
+        },
+        "bus_stop_id": {
+          "type": "keyword"
+        },
+        "bus_stop_name": {
+          "type": "keyword"
+        },
+         "rate_id": {
+          "type": "keyword"
+        },
+        "item_id": {
+          "type": "keyword"
+        },
+        "terminal_type": {
+          "type": "keyword"
+        },
+        "payment_terminal_id": {
+          "type": "keyword"
+        },
+        "delivery_proof": {
+          "type": "keyword"
+        },
+        "delivery_proof_name": {
+          "type": "keyword"
+        },
+        "delivery_proof_id": {
+          "type": "keyword"
+        },
+        "transaction_id": {
+          "type": "keyword"
+        },
+        "latitude": {
+          "type": "keyword"
+        },
+        "longitude": {
+          "type": "keyword"
+        },
+        "cartabonus_id": {
+          "type": "keyword"
+        },
+        "distance": {
+          "type": "float"
+        },
+        "discount": {
+          "type": "keyword"
+        },
+        "class_option": {
+          "type": "keyword"
+        },
+        "cost_chf": {
+          "type": "float"
+        },
+        "sum_payments_chf": {
+          "type": "float"
+        },
+        "sum_payments_eur": {
+          "type": "float"
+        },
+        "sum_combined_payment_cartabonus": {
+          "type": "float"
+        },
+        "payment_type": {
+          "type": "keyword"
+        },
+        "credit_card_type": {
+          "type": "keyword"
+        },
+        "credit_card_info": {
+          "type": "text"
+        },
+        "sum_combined_payment_cash": {
+          "type": "float"
+        },
+        "terminal_transaction_id": {
+          "type": "keyword"
+        },
+        "zone_origin": {
+          "type": "keyword"
+        },
+        "zone_destination": {
+          "type": "keyword"
+        },
+        "via_receipt_description": {
+          "type": "keyword"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,117 @@
+POST _ingest/pipeline/_simulate
+{
+  "pipeline" :
+  {
+    "description": "TPGBAM SCS DATT ingestion",
+    "processors": [
+      {
+        "grok": {
+          "field": "message",
+          "patterns": ["%{WORD:channel},%{DATA:uid},%{WORD:business_object},%{DATA:as_of_time},%{SHORT_DATE:as_of},%{DATA:cost},%{DATA:delivery_status},%{DATA:messdate},%{DATA:terminal_id},%{DATA:terminal_location_id},%{DATA:terminal_location_name},%{DATA:bus_stop_id},%{DATA:bus_stop_name},%{DATA:rate_id},%{DATA:item_id},%{DATA:terminal_type},%{DATA:payment_terminal_id},%{DATA:delivery_proof},%{DATA:delivery_proof_name},%{DATA:delivery_proof_id},%{DATA:transaction_id},%{DATA:latitude},%{DATA:longitude},%{DATA:cartabonus_id},%{DATA:distance},%{DATA:discount},%{DATA:class_option},%{DATA:cost_chf},%{DATA:sum_payments_chf},%{DATA:sum_payments_eur},%{DATA:sum_combined_payment_cartabonus},%{DATA:payment_type},%{DATA:credit_card_info},%{DATA:sum_combined_payment_cash},%{DATA:terminal_transaction_id},%{DATA:zone_origin},%{DATA:zone_destination},%{DATA:via_receipt_description}"],
+          "pattern_definitions": {
+            "SHORT_DATE": "%{YEAR}-%{MONTHNUM}-%{MONTHDAY}"
+          }
+        }
+      },
+      {
+        "gsub": {
+          "field": "cost",
+          "pattern": ",",
+          "replacement": "."
+        }
+      },
+      {
+        "gsub": {
+          "field": "messdate",
+          "pattern": " ",
+          "replacement": "T"
+        }
+      },
+      {
+        "date" : {
+          "field" : "messdate",
+          "formats" : ["ISO8601"],
+          "timezone" : "Europe/Paris"
+        }
+      },
+      {
+        "remove": {
+          "field": "message"
+        }
+      },
+      {
+        "set": {
+          "field": "_type",
+          "value": "tpg_vente"
+        }
+      },
+      {
+        "set": {
+          "field": "_index",
+          "value": "tpgbam_scs_dev_index"
+        }
+      }
+    ]
+  },
+  "docs": [
+    {"_source": {
+  "@timestamp": "2018-06-14T07:52:53.633Z",
+  "@metadata": {
+    "beat": "filebeat",
+    "type": "doc",
+    "version": "6.2.4"
+  },
+  "source": "/Users/macphil1/OneDrive/ANTAES/TPG/TPG_BAM_DATA/MNC/V1/2018-06-13T16:06:53_SMS_VENTE.csv",
+  "offset": 2094,
+  "message": "19255464,SMS,VENTE,2018-06-20,15:30:01,0,EUR,sent,,,2018-06-20 15:16:15.612+02,bouygues,ANONYMSIZATIONSTILLTOBEDONE,\"\",SMS",
+  "prospector": {
+    "type": "log"
+  },
+  "beat": {
+    "name": "MacBook-de-Philippe-Mondon.local",
+    "hostname": "MacBook-de-Philippe-Mondon.local",
+    "version": "6.2.4"
+  }
+}},
+    {"_source": {
+  "@timestamp": "2018-06-14T07:52:53.633Z",
+  "@metadata": {
+    "beat": "filebeat",
+    "type": "doc",
+    "version": "6.2.4"
+  },
+  "source": "/Users/macphil1/OneDrive/ANTAES/TPG/TPG_BAM_DATA/MNC/V1/2018-06-13T16:06:53_SMS_VENTE.csv",
+  "offset": 2540,
+  "message": "19228006,SMS,VENTE,2018-06-19,09:37:48,2,CHF,delivered,,,2018-06-19 09:24:55.531+02,swisscom,ANONYMSIZATIONSTILLTOBEDONE,TPG2,SMS",
+  "prospector": {
+    "type": "log"
+  },
+  "beat": {
+    "name": "MacBook-de-Philippe-Mondon.local",
+    "hostname": "MacBook-de-Philippe-Mondon.local",
+    "version": "6.2.4"
+  }
+}},
+    {"_source": 
+    	{
+  			"@timestamp": "2018-06-14T07:52:53.633Z",
+			"@metadata": {
+    			"beat": "filebeat",
+    			"type": "doc",
+    			"version": "6.2.4"
+  		},
+  		"source": "/Users/macphil1/OneDrive/ANTAES/TPG/TPG_BAM_DATA/MNC/V1/2018-06-13T16:06:53_SMS_VENTE.csv",
+  		"offset": 2391,
+  		"message": "19228008,SMS,VENTE,2018-06-19,09:37:48,5.6,CHF,delivered,,,2018-06-19 09:24:58.561+02,orange,ANONYMSIZATIONSTILLTOBEDONE,CJ92,SMS",
+  		"prospector": {
+    		"type": "log"
+  		},
+  		"beat": {
+    	"name": "MacBook-de-Philippe-Mondon.local",
+    	"hostname": "MacBook-de-Philippe-Mondon.local",
+    	"version": "6.2.4"
+  		}
+		}
+    }
+  ]
+}
