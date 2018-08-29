@@ -61,7 +61,7 @@ transfert_to_archive_folder() {
 
 # Check records already ingested for the current version
 check_ingested() {
-        lines_in_index=`curl --user $src_platform_user $src_platform_url/$src_index*/_count -d "{ \"query\": {\"bool\": {  \"should\": [ {\"match\": { \"as_of_time\": \"$as_of_time\"}}, {\"match\": { \"as_of\": \"$as_of\"}} ],\"minimum_should_match\": 2 } }}" -H"Content-Type: application/json" | jq -r ".count"`
+        lines_in_index=$(set -x; curl --user $src_platform_user $src_platform_url/$src_index*/_count -d "{ \"query\": {\"bool\": {  \"filter\": [ {\"match\": { \"as_of_time\": \"$as_of_time\"}}, {\"match\": { \"as_of\": \"$as_of\"}} ]} }}" -H"Content-Type: application/json" | jq -r ".count")
 }
 
 
