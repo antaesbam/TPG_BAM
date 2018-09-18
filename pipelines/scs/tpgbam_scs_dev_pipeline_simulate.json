@@ -7,9 +7,10 @@ POST _ingest/pipeline/_simulate
       {
         "grok": {
           "field": "message",
-          "patterns": ["%{WORD:channel},%{DATA:uid},%{WORD:business_object},%{DATA:as_of_time},%{SHORT_DATE:as_of},%{DATA:cost},%{DATA:delivery_status},%{DATA:messdate},%{DATA:terminal_id},%{DATA:terminal_location_id},%{DATA:terminal_location_name},%{DATA:bus_stop_id},%{DATA:bus_stop_name},%{DATA:rate_id},%{DATA:item_id},%{DATA:terminal_type},%{DATA:payment_terminal_id},%{DATA:delivery_proof},%{DATA:delivery_proof_name},%{DATA:delivery_proof_id},%{DATA:transaction_id},%{DATA:latitude},%{DATA:longitude},%{DATA:cartabonus_id},%{DATA:distance},%{DATA:discount},%{DATA:class_option},%{DATA:cost_chf},%{DATA:sum_payments_chf},%{DATA:sum_payments_eur},%{DATA:sum_combined_payment_cartabonus},%{DATA:payment_type},%{DATA:credit_card_info},%{DATA:sum_combined_payment_cash},%{DATA:terminal_transaction_id},%{DATA:zone_origin},%{DATA:zone_destination},%{DATA:via_receipt_description}"],
+          "patterns": ["%{DATA:uid};%{WORD:channel};%{WORD:business_object};%{DATA:as_of_time};%{SHORT_DATE:as_of};%{DATA:cost};%{DATA:currency};%{TIMESTAMP_ISO8601_NT:messdate};%{DATA:terminal_id};%{DATA:terminal_location_id};%{DATA:terminal_location_name};%{DATA:bus_stop_id};%{DATA:bus_stop_name};%{DATA:rate_id};%{DATA:item_id};%{DATA:terminal_type};%{DATA:payment_terminal_id};%{DATA:delivery_proof_id};%{DATA:delivery_proof};%{DATA:delivery_proof_name};%{DATA:transaction_id};%{DATA:latitude};%{DATA:longitude};%{DATA:cartabonus_id};%{DATA:distance};%{DATA:discount};%{DATA:class_option};%{DATA:sum_payments_chf};%{DATA:sum_payments_eur};%{DATA:sum_combined_payment_cartabonus};%{DATA:payment_type};%{DATA:credit_card_type};%{DATA:credit_card_info};%{DATA:sum_combined_payment_cash};%{GREEDYDATA:terminal_transaction_id};%{DATA:zone_origin};%{DATA:zone_destination};%{DATA:via_receipt_description}"],
           "pattern_definitions": {
-            "SHORT_DATE": "%{YEAR}-%{MONTHNUM}-%{MONTHDAY}"
+            "SHORT_DATE": "%{YEAR}-%{MONTHNUM}-%{MONTHDAY}",
+            "TIMESTAMP_ISO8601_NT" : "%{YEAR}-%{MONTHNUM}-%{MONTHDAY}[T ]%{HOUR}:?%{MINUTE}(?::?%{SECOND})?"
           }
         }
       },
@@ -35,6 +36,13 @@ POST _ingest/pipeline/_simulate
         }
       },
       {
+        "gsub": {
+          "field": "terminal_transaction_id",
+          "pattern": "\"",
+          "replacement": ""
+        }
+      },
+      {
         "remove": {
           "field": "message"
         }
@@ -48,14 +56,14 @@ POST _ingest/pipeline/_simulate
       {
         "set": {
           "field": "_index",
-          "value": "tpgbam_scs_dev_index"
+          "value": "tpgbam_dev_scs_index"
         }
       }
     ]
   },
   "docs": [
     {"_source": {
-  "@timestamp": "2018-06-14T07:52:53.633Z",
+  "@timestamp": "2018-09-14T17:20:29.678Z",
   "@metadata": {
     "beat": "filebeat",
     "type": "doc",
@@ -63,7 +71,7 @@ POST _ingest/pipeline/_simulate
   },
   "source": "/Users/macphil1/OneDrive/ANTAES/TPG/TPG_BAM_DATA/MNC/V1/2018-06-13T16:06:53_SMS_VENTE.csv",
   "offset": 2094,
-  "message": "19255464,SMS,VENTE,2018-06-20,15:30:01,0,EUR,sent,,,2018-06-20 15:16:15.612+02,bouygues,ANONYMSIZATIONSTILLTOBEDONE,\"\",SMS",
+  "message": "datt6484_2412_97897;DATT;VENTE;00:00:00;2018-09-17;2.00;CHF;2018-09-17T16:19:35;datt6484;6001;DATT P+R Bernex;92660;P+R BERNEX;TPG;6;L;;224;6;SAUT DE PUCE;datt6484_2412;46.178818;6.086129;;888;normal;2;2.00;0.00;0.00;CASH;;;0.00;;10;;",
   "prospector": {
     "type": "log"
   },
@@ -74,7 +82,7 @@ POST _ingest/pipeline/_simulate
   }
 }},
     {"_source": {
-  "@timestamp": "2018-06-14T07:52:53.633Z",
+  "@timestamp": "2018-09-14T17:21:29.633Z",
   "@metadata": {
     "beat": "filebeat",
     "type": "doc",
@@ -82,7 +90,7 @@ POST _ingest/pipeline/_simulate
   },
   "source": "/Users/macphil1/OneDrive/ANTAES/TPG/TPG_BAM_DATA/MNC/V1/2018-06-13T16:06:53_SMS_VENTE.csv",
   "offset": 2540,
-  "message": "19228006,SMS,VENTE,2018-06-19,09:37:48,2,CHF,delivered,,,2018-06-19 09:24:55.531+02,swisscom,ANONYMSIZATIONSTILLTOBEDONE,TPG2,SMS",
+  "message": "datt6484_2413_97898;DATT;VENTE;00:00:00;2018-09-17;2.00;CHF;2018-09-17T16:19:35;datt6484;6001;DATT P+R Bernex;92660;P+R BERNEX;TPG;6;L;31940250;224;6;SAUT DE PUCE;datt6484_2413;46.178818;6.086129;;888;normal;2;2.00;0.00;0.00;CREDIT_CARD;POSTCARD;;0.00;\"273;20180814151806\";10;;",
   "prospector": {
     "type": "log"
   },
@@ -91,27 +99,6 @@ POST _ingest/pipeline/_simulate
     "hostname": "MacBook-de-Philippe-Mondon.local",
     "version": "6.2.4"
   }
-}},
-    {"_source": 
-    	{
-  			"@timestamp": "2018-06-14T07:52:53.633Z",
-			"@metadata": {
-    			"beat": "filebeat",
-    			"type": "doc",
-    			"version": "6.2.4"
-  		},
-  		"source": "/Users/macphil1/OneDrive/ANTAES/TPG/TPG_BAM_DATA/MNC/V1/2018-06-13T16:06:53_SMS_VENTE.csv",
-  		"offset": 2391,
-  		"message": "19228008,SMS,VENTE,2018-06-19,09:37:48,5.6,CHF,delivered,,,2018-06-19 09:24:58.561+02,orange,ANONYMSIZATIONSTILLTOBEDONE,CJ92,SMS",
-  		"prospector": {
-    		"type": "log"
-  		},
-  		"beat": {
-    	"name": "MacBook-de-Philippe-Mondon.local",
-    	"hostname": "MacBook-de-Philippe-Mondon.local",
-    	"version": "6.2.4"
-  		}
-		}
-    }
+}}
   ]
 }

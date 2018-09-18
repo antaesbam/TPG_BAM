@@ -1,6 +1,6 @@
 PUT _template/tpgbam_mnc_dev_index_template
 {
-  "index_patterns": "tpgbam_scs_dev_index*",
+  "index_patterns": "tpgbam_dev_scs_index*",
   "settings": {
     "number_of_shards": 5, 
     "number_of_replicas": 2
@@ -28,7 +28,7 @@ PUT _template/tpgbam_mnc_dev_index_template
         "cost": {
           "type": "float"
         },
-        "delivery_status": {
+        "currency": {
           "type": "keyword"
         },
         "messdate": {
@@ -90,9 +90,6 @@ PUT _template/tpgbam_mnc_dev_index_template
         },
         "class_option": {
           "type": "keyword"
-        },
-        "cost_chf": {
-          "type": "float"
         },
         "sum_payments_chf": {
           "type": "float"

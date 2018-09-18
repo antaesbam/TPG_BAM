@@ -13,7 +13,7 @@ count_lines() {
 # gather from file : as_of & as_of_time 
 parse_file_name() {
     local f=`basename "${1}"`
-    echo 'BASENAME:' $f
+    echo $(date) ' - BASENAME:' $f >> $logging_file
     as_of=`echo $f | cut -c 1-10`
     as_of_time=`echo $f | cut -c 12-19`
 }
@@ -24,11 +24,14 @@ check_ingested() {
 
 post_to_monitoring_index() {
         # we set the date before posting
-        date=`date "+%Y-%m-%dT%H:%M:%S"`
+        date=$(date "+%Y-%m-%dT%H:%M:%S")
 
         index_post_response=$(set -x; curl -XPOST -H"Content-Type: application/json" --user $monitoring_platform_user $monitoring_platform_url/$monitoring_index/$record_type -d "{ \"provider\": \"$provider\", \"date\": \"$date\", \"index\": \"$index\",\"file\": \"$f\",\"as_of\": \"$as_of\", \"as_of_time\": \"$as_of_time\", \"num_in_file\": $lines_in_files, \"num_in_index\": $qr}")
 
 }
+
+#local information
+logging_file='/home/{{ data_provider }}/log/data_ingestion_monitoring.log'
 
 # monitored platform
 src_index='tpgbam_{{ depenvironment }}_{{ data_provider }}'
@@ -64,24 +67,24 @@ do
         do
                 count_lines $f
                 lines_in_files=$((lines_in_files - 1)) 
-                echo $f $lines_in_files
+                echo $(date) ' - ' $f $lines_in_files >> $logging_file
                 parse_file_name $f
 
-                echo $f $as_of
+                echo $(date) ' - ' $f $as_of >> $logging_file
 
-                echo $f $as_of_time
+                echo $(date) ' - ' $f $as_of_time >> $logging_file
 
                 check_ingested
-                echo $f $qr;
+                echo $(date) ' - ' echo $f $qr; >> $logging_file
 
                 # get the current date
-                date=`date "+%Y-%m-%dT%H:%M:%S"`
-                echo $date 
+                date=$(date "+%Y-%m-%dT%H:%M:%S")
+                echo $(date) ' - ' $date >> $logging_file
                 post_to_monitoring_index
-                echo $index_post_response       
+                echo $(date) ' - ' $index_post_response >> $logging_file    
         done
-echo "sleep 60"
-echo "-----------------------------"
+echo $(date) ' - sleep 60' >> $logging_file
+echo $(date) '------------------------------' >> $logging_file
 sleep 60 
 done
 
