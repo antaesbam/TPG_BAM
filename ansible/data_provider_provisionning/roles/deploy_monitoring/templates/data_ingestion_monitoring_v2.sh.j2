@@ -22,15 +22,31 @@ check_ingested() {
         qr=$(set -x; curl --user $src_platform_user $src_platform_url/$src_index*/_count -d "{ \"query\": {\"bool\": {  \"filter\": [ {\"match\": { \"as_of_time\": \"$as_of_time\"}}, {\"match\": { \"as_of\": \"$as_of\"}} ] } }}" -H"Content-Type: application/json" | jq -r ".count")
 }
 
+sum_costs_in_file() {
+	echo $(date) ' - SUM OF COSTS in file : BEGIN' >> $logging_file
+	sum_costs_file=$(cat $f | csvsql --query "SELECT SUM(cost) AS sum from stdin" | sed -n 2p)
+	echo $(date) ' - SUM OF COSTS in file : ' $f " : " $sum_costs_file  >> $logging_file
+}
+
+sum_costs_in_index() {
+	echo $(date) ' - SUM OF COSTS in index : BEGIN' >> $logging_file
+	sum_costs_index=$(set -x; curl --user $src_platform_user $src_platform_url/$src_index*/_search -d "{ \"size\": 0, \"query\": {\"bool\": {  \"filter\": [ {\"match\": { \"as_of_time\": \"$as_of_time\"}}, {\"match\": { \"as_of\": \"$as_of\"}} ] }} ,\"aggs\": { \"costs\" : { \"sum\" : { \"field\" : \"cost\" } }}}" -H"Content-Type: application/json" | jq -r ".aggregations.costs.value")
+	echo $(date) ' - SUM OF COSTS in index : ' $f " : " $sum_costs_index  >> $logging_file
+}
+
 post_to_monitoring_index() {
         # we set the date before posting
         date=$(date "+%Y-%m-%dT%H:%M:%S")
 
-        index_post_response=$(set -x; curl -XPOST -H"Content-Type: application/json" --user $monitoring_platform_user $monitoring_platform_url/$monitoring_index/$record_type -d "{ \"provider\": \"$provider\", \"date\": \"$date\", \"index\": \"$index\",\"file\": \"$f\",\"as_of\": \"$as_of\", \"as_of_time\": \"$as_of_time\", \"num_in_file\": $lines_in_files, \"num_in_index\": $qr}")
+        index_post_response=$(set -x; curl -XPOST -H"Content-Type: application/json" --user $monitoring_platform_user $monitoring_platform_url/$monitoring_index/$record_type -d "{ \"provider\": \"$provider\", \"date\": \"$date\", \"index\": \"$index\",\"file\": \"$f\",\"as_of\": \"$as_of\", \"as_of_time\": \"$as_of_time\", \"num_in_file\": $lines_in_files, \"num_in_index\": $qr, \"sum_cost_in_file\": $sum_costs_file, \"sum_cost_in_index\": $sum_costs_index}")
 
 }
 
-#local information
+# Data quality variables
+sum_costs_file=0
+sum_costs_index=0
+
+# local information
 logging_file='/home/{{ data_provider }}/log/data_ingestion_monitoring.log'
 
 # monitored platform
@@ -55,7 +71,7 @@ as_of=''
 as_of_time=''
 date=''
 monitoring_index='monitoring_ingester_{{ data_provider }}'
-record_type='record_count'
+record_type='record_count_{{ data_provider }}'
 provider='{{ data_provider }}'
 index_post_response=''
 
@@ -73,7 +89,13 @@ do
                 echo $(date) ' - ' $f $as_of >> $logging_file
 
                 echo $(date) ' - ' $f $as_of_time >> $logging_file
-
+                
+                # check sums
+                # in file
+                sum_costs_in_file
+				# in index
+				sum_costs_in_index
+				
                 check_ingested
                 echo $(date) ' - ' echo $f $qr; >> $logging_file
 

@@ -49,7 +49,7 @@ check_files_to_archive() {
 # archive input file
 transfert_to_archive_folder() {
         local f=$archive_folder/`basename "${1}"`
-        echo $(date) ' - CHECK FILE EXISTS:' $f >> $logging_file
+        # echo $(date) ' - CHECK FILE EXISTS:' $f >> $logging_file
         if [ ! -f $f ]
         then
                 echo $(date) ' - READY TO ARCHIVE FILE : ' $f >> $logging_file
