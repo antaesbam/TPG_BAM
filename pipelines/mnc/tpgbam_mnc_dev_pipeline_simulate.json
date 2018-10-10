@@ -71,6 +71,12 @@ POST _ingest/pipeline/_simulate
           "field": "_index",
           "value": "tpgbam_mnc_dev_index"
         }
+      },
+      {
+        "set": {
+          "field": "location",
+          "value": "46.174525, 6.131126"
+        }
       }
     ]
   },

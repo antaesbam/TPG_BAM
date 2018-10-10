@@ -1,4 +1,4 @@
-PUT _template/tpgbam_mnc_dev_index_template
+PUT _template/tpgbam_scs_dev_index_template
 {
   "index_patterns": "tpgbam_dev_scs_index*",
   "settings": {
@@ -78,6 +78,10 @@ PUT _template/tpgbam_mnc_dev_index_template
         },
         "longitude": {
           "type": "keyword"
+        },
+        "location" :
+        {
+        	"type": "geo_point"
         },
         "cartabonus_id": {
           "type": "keyword"

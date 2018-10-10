@@ -43,11 +43,6 @@ POST _ingest/pipeline/_simulate
         }
       },
       {
-        "remove": {
-          "field": "message"
-        }
-      },
-      {
         "set": {
           "field": "_type",
           "value": "tpg_vente"
@@ -57,6 +52,12 @@ POST _ingest/pipeline/_simulate
         "set": {
           "field": "_index",
           "value": "tpgbam_dev_scs_index"
+        }
+      },
+      {
+        "script": {
+          "lang": "painless",
+          "source": "if(ctx.longitude != '') ctx.location = ctx.longitude + ',' + ctx.latitude;"
         }
       }
     ]
@@ -71,7 +72,7 @@ POST _ingest/pipeline/_simulate
   },
   "source": "/Users/macphil1/OneDrive/ANTAES/TPG/TPG_BAM_DATA/MNC/V1/2018-06-13T16:06:53_SMS_VENTE.csv",
   "offset": 2094,
-  "message": "datt6484_2412_97897;DATT;VENTE;00:00:00;2018-09-17;2.00;CHF;2018-09-17T16:19:35;datt6484;6001;DATT P+R Bernex;92660;P+R BERNEX;TPG;6;L;;224;6;SAUT DE PUCE;datt6484_2412;46.178818;6.086129;;888;normal;2;2.00;0.00;0.00;CASH;;;0.00;;10;;",
+  "message": "datt6105_92475_97805;DATT;VENTE;00:00:00;2018-09-21;3.00;CHF;2018-06-01T07:58:42;datt6105;6105;DATT Meyrin-Gravière;94961;MEYRIN-GRAVIÈRE;TPG;30;L;;97805;30;BILLET TOUT GENEVE;datt6105_92475;46.2364346;6.08170630;;888;normal;2;3.00;0.00;0.00;CASH;;;0.00;;10;;",
   "prospector": {
     "type": "log"
   },
@@ -90,7 +91,7 @@ POST _ingest/pipeline/_simulate
   },
   "source": "/Users/macphil1/OneDrive/ANTAES/TPG/TPG_BAM_DATA/MNC/V1/2018-06-13T16:06:53_SMS_VENTE.csv",
   "offset": 2540,
-  "message": "datt6484_2413_97898;DATT;VENTE;00:00:00;2018-09-17;2.00;CHF;2018-09-17T16:19:35;datt6484;6001;DATT P+R Bernex;92660;P+R BERNEX;TPG;6;L;31940250;224;6;SAUT DE PUCE;datt6484_2413;46.178818;6.086129;;888;normal;2;2.00;0.00;0.00;CREDIT_CARD;POSTCARD;;0.00;\"273;20180814151806\";10;;",
+  "message": "datt6484_2413_97898;DATT;VENTE;00:00:00;2018-09-17;2.00;CHF;2018-09-17T16:19:35;datt6484;6001;DATT P+R Bernex;92660;P+R BERNEX;TPG;6;L;31940250;224;6;SAUT DE PUCE;datt6484_2413;;;;888;normal;2;2.00;0.00;0.00;CREDIT_CARD;POSTCARD;;0.00;\"273;20180814151806\";10;;",
   "prospector": {
     "type": "log"
   },

@@ -41,11 +41,6 @@ PUT _ingest/pipeline/tpgbam_scs_dev_pipeline
         }
       },
       {
-        "remove": {
-          "field": "message"
-        }
-      },
-      {
         "set": {
           "field": "_type",
           "value": "tpg_vente"
@@ -55,6 +50,12 @@ PUT _ingest/pipeline/tpgbam_scs_dev_pipeline
         "set": {
           "field": "_index",
           "value": "tpgbam_dev_scs_index"
+        }
+      },
+      {
+        "script": {
+          "lang": "painless",
+          "source": "if(ctx.longitude != '') ctx.location = ctx.longitude + ',' + ctx.latitude;"
         }
       }
     ]

@@ -57,6 +57,9 @@ PUT _template/tpgbam_mnc_dev_index_template
         },
         "delivery_proof": {
           "type": "keyword"
+        },
+        "location" : {
+        	"type": "geo_point"
         }
       }
     }

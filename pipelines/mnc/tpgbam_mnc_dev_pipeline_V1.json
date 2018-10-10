@@ -69,6 +69,12 @@ PUT _ingest/pipeline/tpgbam_mnc_dev_pipeline
           "field": "_index",
           "value": "tpgbam_dev_mnc_index"
         }
+      },
+      {
+        "set": {
+          "field": "location",
+          "value": "46.174525, 6.131126"
+        }
       }
     ]
 }
