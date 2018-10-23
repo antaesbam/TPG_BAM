@@ -1,0 +1,11 @@
+# Enable monitoring services
+-   name: Enable file rotation service
+    systemd:
+        name: data.ingestion.file.rotation.{{ data_provider }}.{{ depenvironment }}
+        daemon_reload: true
+        enabled: "{{ enable_service }}"
+-   name: Enable the data ingestion monitoring service
+    systemd:
+        name: monitoring.ingester.data.{{ data_provider }}.{{ depenvironment }}
+        daemon_reload: true
+        enabled: "{{ enable_service }}"

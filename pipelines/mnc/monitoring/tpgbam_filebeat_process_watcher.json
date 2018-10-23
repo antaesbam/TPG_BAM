@@ -1,0 +1,69 @@
+PUT _xpack/watcher/watch/filebeat_mnc_monitoring/_execute
+{
+    "trigger": {
+        "schedule": {
+            "interval": "15m"
+        }
+    },
+    "input": {
+        "search": {
+            "request": {
+                "indices": [
+                    "metricbeat-*"
+                ],
+                "body" : {
+                    "size" : 5,
+                    "query": {
+                        "bool": {
+                            "filter": [
+                                {
+                                    "range": {
+                                        "@timestamp": {
+                                            "gte": "now-30M",
+                                            "lte": "now"
+                                        }
+                                    }
+                                },
+                                {
+                                    "match": {
+                                        "system.process.cgroup.cpu.id": "filebeat.mnc.integ.service"
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "aggs" : {
+                        "get_latest": {
+                            "terms": {
+                                "field": "@timestamp", 
+                                "size": 1,
+                                "order": {
+                                    "_key": "desc"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "condition": {
+        "compare" : {
+            "ctx.payload.hits.total" : { 
+                "eq" : 0
+            }
+        }
+    },
+    "actions": {
+        "filebeat_monitoring_notification_mnc_integ": {
+            "email": {
+                "from": "bigdata@antaes.ch",  
+                "to": "bigdata@antaes.ch",     
+                "subject": "filebeat monitoring notification mnc integ",
+                "body": {
+                    "html": "FOUND FILEBEAT MNC PROCESS DOWN"
+                }
+            }
+        }
+    }
+}

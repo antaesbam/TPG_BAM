@@ -1,0 +1,80 @@
+PUT _ingest/pipeline/tpgbam_mnc_dev_pipeline
+{
+    "description": "TPGBAM MNC SMS ingestion",
+    "processors": [
+      {
+        "grok": {
+          "field": "message",
+          "patterns": ["%{DATA:uid},%{WORD:channel},%{WORD:business_object},%{SHORT_DATE:as_of},%{DATA:as_of_time},%{DATA:cost},%{WORD:currency},%{WORD:delivery_status},%{DATA:error_code},%{DATA:error_message},%{DATA:messdate},%{WORD:operator},%{DATA:phone},%{DATA:theme},%{WORD:delivery_proof}"],
+          "pattern_definitions": {
+            "SHORT_DATE": "%{YEAR}-%{MONTHNUM}-%{MONTHDAY}"
+          }
+        }
+      },
+      {
+        "gsub": {
+          "field": "cost",
+          "pattern": ",",
+          "replacement": "."
+        }
+      },
+      {
+        "gsub": {
+          "field": "messdate",
+          "pattern": " ",
+          "replacement": "T"
+        }
+      },
+      {
+        "gsub": {
+          "field": "error_code",
+          "pattern": "\"",
+          "replacement": ""
+        }
+      },
+      {
+        "gsub": {
+          "field": "error_message",
+          "pattern": "\"",
+          "replacement": ""
+        }
+      },
+      {
+        "gsub": {
+          "field": "theme",
+          "pattern": "\"",
+          "replacement": ""
+        }
+      },
+      {
+        "date" : {
+          "field" : "messdate",
+          "formats" : ["ISO8601"],
+          "timezone" : "Europe/Paris"
+        }
+      },
+      {
+        "remove": {
+          "field": "message"
+        }
+      },
+      {
+        "set": {
+          "field": "_type",
+          "value": "tpg_vente"
+        }
+      },
+      {
+        "set": {
+          "field": "_index",
+          "value": "tpgbam_dev_mnc_index"
+        }
+      },
+      {
+        "set": {
+          "field": "location",
+          "value": "46.174525, 6.131126"
+        }
+      }
+    ]
+}

@@ -1,0 +1,105 @@
+POST _ingest/pipeline/_simulate
+{
+  "pipeline" :
+  {
+    "description": "TPGBAM SCS DATT ingestion",
+    "processors": [
+      {
+        "grok": {
+          "field": "message",
+          "patterns": ["%{DATA:uid};%{WORD:channel};%{WORD:business_object};%{DATA:as_of_time};%{SHORT_DATE:as_of};%{DATA:cost};%{DATA:currency};%{TIMESTAMP_ISO8601_NT:messdate};%{DATA:terminal_id};%{DATA:terminal_location_id};%{DATA:terminal_location_name};%{DATA:bus_stop_id};%{DATA:bus_stop_name};%{DATA:rate_id};%{DATA:item_id};%{DATA:terminal_type};%{DATA:payment_terminal_id};%{DATA:delivery_proof_id};%{DATA:delivery_proof};%{DATA:delivery_proof_name};%{DATA:transaction_id};%{DATA:latitude};%{DATA:longitude};%{DATA:cartabonus_id};%{DATA:distance};%{DATA:discount};%{DATA:class_option};%{DATA:sum_payments_chf};%{DATA:sum_payments_eur};%{DATA:sum_combined_payment_cartabonus};%{DATA:payment_type};%{DATA:credit_card_type};%{DATA:credit_card_info};%{DATA:sum_combined_payment_cash};%{GREEDYDATA:terminal_transaction_id};%{DATA:zone_origin};%{DATA:zone_destination};%{DATA:via_receipt_description}"],
+          "pattern_definitions": {
+            "SHORT_DATE": "%{YEAR}-%{MONTHNUM}-%{MONTHDAY}",
+            "TIMESTAMP_ISO8601_NT" : "%{YEAR}-%{MONTHNUM}-%{MONTHDAY}[T ]%{HOUR}:?%{MINUTE}(?::?%{SECOND})?"
+          }
+        }
+      },
+      {
+        "gsub": {
+          "field": "cost",
+          "pattern": ",",
+          "replacement": "."
+        }
+      },
+      {
+        "gsub": {
+          "field": "messdate",
+          "pattern": " ",
+          "replacement": "T"
+        }
+      },
+      {
+        "date" : {
+          "field" : "messdate",
+          "formats" : ["ISO8601"],
+          "timezone" : "Europe/Paris"
+        }
+      },
+      {
+        "gsub": {
+          "field": "terminal_transaction_id",
+          "pattern": "\"",
+          "replacement": ""
+        }
+      },
+      {
+        "set": {
+          "field": "_type",
+          "value": "tpg_vente"
+        }
+      },
+      {
+        "set": {
+          "field": "_index",
+          "value": "tpgbam_dev_scs_index"
+        }
+      },
+      {
+        "script": {
+          "lang": "painless",
+          "source": "if(ctx.longitude != '') ctx.location = ctx.longitude + ',' + ctx.latitude;"
+        }
+      }
+    ]
+  },
+  "docs": [
+    {"_source": {
+  "@timestamp": "2018-09-14T17:20:29.678Z",
+  "@metadata": {
+    "beat": "filebeat",
+    "type": "doc",
+    "version": "6.2.4"
+  },
+  "source": "/Users/macphil1/OneDrive/ANTAES/TPG/TPG_BAM_DATA/MNC/V1/2018-06-13T16:06:53_SMS_VENTE.csv",
+  "offset": 2094,
+  "message": "datt6105_92475_97805;DATT;VENTE;00:00:00;2018-09-21;3.00;CHF;2018-06-01T07:58:42;datt6105;6105;DATT Meyrin-Gravière;94961;MEYRIN-GRAVIÈRE;TPG;30;L;;97805;30;BILLET TOUT GENEVE;datt6105_92475;46.2364346;6.08170630;;888;normal;2;3.00;0.00;0.00;CASH;;;0.00;;10;;",
+  "prospector": {
+    "type": "log"
+  },
+  "beat": {
+    "name": "MacBook-de-Philippe-Mondon.local",
+    "hostname": "MacBook-de-Philippe-Mondon.local",
+    "version": "6.2.4"
+  }
+}},
+    {"_source": {
+  "@timestamp": "2018-09-14T17:21:29.633Z",
+  "@metadata": {
+    "beat": "filebeat",
+    "type": "doc",
+    "version": "6.2.4"
+  },
+  "source": "/Users/macphil1/OneDrive/ANTAES/TPG/TPG_BAM_DATA/MNC/V1/2018-06-13T16:06:53_SMS_VENTE.csv",
+  "offset": 2540,
+  "message": "datt6484_2413_97898;DATT;VENTE;00:00:00;2018-09-17;2.00;CHF;2018-09-17T16:19:35;datt6484;6001;DATT P+R Bernex;92660;P+R BERNEX;TPG;6;L;31940250;224;6;SAUT DE PUCE;datt6484_2413;;;;888;normal;2;2.00;0.00;0.00;CREDIT_CARD;POSTCARD;;0.00;\"273;20180814151806\";10;;",
+  "prospector": {
+    "type": "log"
+  },
+  "beat": {
+    "name": "MacBook-de-Philippe-Mondon.local",
+    "hostname": "MacBook-de-Philippe-Mondon.local",
+    "version": "6.2.4"
+  }
+}}
+  ]
+}

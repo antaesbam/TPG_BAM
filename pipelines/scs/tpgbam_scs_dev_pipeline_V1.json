@@ -1,0 +1,62 @@
+PUT _ingest/pipeline/tpgbam_scs_dev_pipeline
+{
+    "description": "TPGBAM SCS DATT ingestion",
+    "processors": [
+      {
+        "grok": {
+          "field": "message",
+          "patterns": ["%{DATA:uid};%{WORD:channel};%{WORD:business_object};%{DATA:as_of_time};%{SHORT_DATE:as_of};%{DATA:cost};%{DATA:currency};%{TIMESTAMP_ISO8601_NT:messdate};%{DATA:terminal_id};%{DATA:terminal_location_id};%{DATA:terminal_location_name};%{DATA:bus_stop_id};%{DATA:bus_stop_name};%{DATA:rate_id};%{DATA:item_id};%{DATA:terminal_type};%{DATA:payment_terminal_id};%{DATA:delivery_proof_id};%{DATA:delivery_proof};%{DATA:delivery_proof_name};%{DATA:transaction_id};%{DATA:latitude};%{DATA:longitude};%{DATA:cartabonus_id};%{DATA:distance};%{DATA:discount};%{DATA:class_option};%{DATA:sum_payments_chf};%{DATA:sum_payments_eur};%{DATA:sum_combined_payment_cartabonus};%{DATA:payment_type};%{DATA:credit_card_type};%{DATA:credit_card_info};%{DATA:sum_combined_payment_cash};%{GREEDYDATA:terminal_transaction_id};%{DATA:zone_origin};%{DATA:zone_destination};%{DATA:via_receipt_description}"],
+          "pattern_definitions": {
+            "SHORT_DATE": "%{YEAR}-%{MONTHNUM}-%{MONTHDAY}",
+            "TIMESTAMP_ISO8601_NT" : "%{YEAR}-%{MONTHNUM}-%{MONTHDAY}[T ]%{HOUR}:?%{MINUTE}(?::?%{SECOND})?"
+          }
+        }
+      },
+      {
+        "gsub": {
+          "field": "cost",
+          "pattern": ",",
+          "replacement": "."
+        }
+      },
+      {
+        "gsub": {
+          "field": "messdate",
+          "pattern": " ",
+          "replacement": "T"
+        }
+      },
+      {
+        "date" : {
+          "field" : "messdate",
+          "formats" : ["ISO8601"],
+          "timezone" : "Europe/Paris"
+        }
+      },
+      {
+        "gsub": {
+          "field": "terminal_transaction_id",
+          "pattern": "\"",
+          "replacement": ""
+        }
+      },
+      {
+        "set": {
+          "field": "_type",
+          "value": "tpg_vente"
+        }
+      },
+      {
+        "set": {
+          "field": "_index",
+          "value": "tpgbam_dev_scs_index"
+        }
+      },
+      {
+        "script": {
+          "lang": "painless",
+          "source": "if(ctx.longitude != '') ctx.location = ctx.longitude + ',' + ctx.latitude;"
+        }
+      }
+    ]
+}

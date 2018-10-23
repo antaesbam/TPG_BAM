@@ -1,0 +1,81 @@
+{
+  "_comment" : "Check the mnc filebeat process is up and sends email notification if required",
+  "_comment" : "notification is sent to bigdata@antaes.ch",
+  "_comment" : "notification is sent if process is ko for 30 minutes",
+  "trigger": {
+    "schedule": {
+      "interval": "15m"
+    }
+  },
+  "input": {
+    "search": {
+      "request": {
+        "search_type": "query_then_fetch",
+        "indices": [
+          "metricbeat-*"
+        ],
+        "types": [],
+        "body": {
+          "size": 5,
+          "query": {
+            "bool": {
+              "filter": [
+                {
+                  "range": {
+                    "@timestamp": {
+                      "gte": "now-30m",
+                      "lte": "now"
+                    }
+                  }
+                },
+                {
+                  "match": {
+                    "system.process.cgroup.cpu.id": "filebeat.mnc.integ.service"
+                  }
+                }
+              ]
+            }
+          },
+          "aggs": {
+            "get_latest": {
+              "terms": {
+                "field": "@timestamp",
+                "size": 1,
+                "order": {
+                  "_key": "desc"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "condition": {
+    "compare": {
+      "ctx.payload.hits.total": {
+        "eq": 0
+      }
+    }
+  },
+  "actions": {
+    "filebeat_monitoring_notification_mnc_integ": {
+      "email": {
+        "profile": "standard",
+        "from": "bigdata@antaes.ch",
+        "to": [
+          "bigdata@antaes.ch"
+        ],
+        "subject": "filebeat monitoring notification mnc integ",
+        "body": {
+          "html": "FOUND FILEBEAT MNC PROCESS DOWN"
+        }
+      }
+    }
+  },
+  "metadata": {
+    "threshold": 0,
+    "interval": "10s",
+    "window": "20s"
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "_comment" : "Check the ingestion of mnc files and sends email notification if required",
+  "_comment" : "notification is sent to bigdata@antaes.ch",
+  "_comment" : "notification is sent if 2 files remains in the publish filesystem for 30 minutes",
+  "trigger": {
+    "schedule": {
+      "interval": "15m"
+    }
+  },
+  "input": {
+    "search": {
+      "request": {
+        "search_type": "query_then_fetch",
+        "indices": [
+          "monitoring_ingester_mnc_sms*"
+        ],
+        "types": [],
+        "body": {
+          "size": 5,
+          "query": {
+   			 "bool": {
+      			"filter": [
+          			{"range": {"date": {"gte": "now-30m","lte": "now"}}},
+          			{"script" : {"script" : {"source": "doc['num_in_file'].value != doc['num_in_index'].value",
+                  			"lang": "painless"}}
+          			}
+        		]
+      		 }
+    	  }
+        }
+      }
+    }
+  },
+  "condition": {
+    "compare": {
+      "ctx.payload.hits.total": {
+        "eq": 2
+      }
+    }
+  },
+  "actions": {
+    "filebeat_monitoring_notification_mnc_integ": {
+      "email": {
+        "profile": "standard",
+        "from": "bigdata@antaes.ch",
+        "to": [
+          "bigdata@antaes.ch"
+        ],
+        "subject": "filebeat monitoring notification mnc integ",
+        "body": {
+          "html": "FOUND FILE NOT INGESTED"
+        }
+      }
+    }
+  },
+  "metadata": {
+    "threshold": 0,
+    "interval": "10s",
+    "window": "20s"
+  }
+}

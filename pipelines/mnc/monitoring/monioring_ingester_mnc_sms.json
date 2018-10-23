@@ -1,0 +1,37 @@
+PUT monioring_ingester_mnc_sms 
+{
+  "settings" : {
+    "number_of_shards": 1
+  },
+  "mappings": {
+    "record_count" : {
+      "properties": {
+        "provider" : {
+          "type": "keyword"
+        },
+        "date" : {
+          "type": "date"
+        },
+        "index" : {
+          "type": "text"
+        },
+        "file" : {
+          "type": "text"
+        },
+        "as_of": {
+          "type": "date",
+          "format": "yyyy-MM-dd"
+        },
+        "as_of_time" : {
+          "type": "text"
+        },
+        "num_in_file" : {
+          "type": "integer"
+        },
+        "num_in_index" : {
+          "type": "integer"
+        }
+      }
+    }
+  }
+}
