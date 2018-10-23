@@ -235,4 +235,15 @@
           href="Node_7e137c39-bc1f-4197-99dc-bbb1dffd682d.xml#7e137c39-bc1f-4197-99dc-bbb1dffd682d"/>
     </children>
   </children>
+  <children
+      xsi:type="archimate:DiagramModelNote"
+      id="abc70470-cac6-46f2-b130-e33b0562b07c"
+      textAlignment="1"
+      content="Test Commit">
+    <bounds
+        x="94"
+        y="697"
+        width="185"
+        height="80"/>
+  </children>
 </archimate:ArchimateDiagramModel>
