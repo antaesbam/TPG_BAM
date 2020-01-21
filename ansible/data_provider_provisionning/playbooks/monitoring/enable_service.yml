@@ -1,0 +1,14 @@
+---
+# file: playbooks/monitoring/enable_service.yml
+
+- name: Enable file rotation service
+  systemd:
+    name: "data.ingestion.file.rotation.{{ data_provider }}.{{ env }}"
+    daemon_reload: true
+    enabled: true
+
+- name: Enable data ingestion monitoring service
+  systemd:
+    name: "monitoring.ingester.data.{{ data_provider }}.{{ env }}"
+    daemon_reload: true
+    enabled: true

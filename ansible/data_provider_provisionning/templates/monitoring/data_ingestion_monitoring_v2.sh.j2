@@ -1,0 +1,113 @@
+#!/bin/bash
+# {{ ansible_managed }}
+# List files in the current folder
+# for each file, count lines and count ingested records
+# send results in a new monitoring index
+# WARNING: to use this script, jq must be installed on the system
+
+count_lines() {
+    local f=$1
+    # this is the return value, i.e. non local
+    lines_in_files=`wc -l $f | sed 's/^\([0-9]*\).*$/\1/'`
+}
+
+# gather from file : as_of & as_of_time
+parse_file_name() {
+    local f=`basename "${1}"`
+    echo $(date) ' - BASENAME:' $f >> $logging_file
+    as_of=`echo $f | cut -c 1-10`
+    as_of_time=`echo $f | cut -c 12-19`
+}
+
+check_ingested() {
+        qr=$(set -x; curl --user $src_platform_user $src_platform_url/$src_index*/_count -d "{ \"query\": {\"bool\": {  \"filter\": [ {\"match\": { \"as_of_time\": \"$as_of_time\"}}, {\"match\": { \"as_of\": \"$as_of\"}} ] } }}" -H"Content-Type: application/json" | jq -r ".count")
+}
+
+sum_costs_in_file() {
+	echo $(date) ' - SUM OF COSTS in file : BEGIN' >> $logging_file
+	sum_costs_file=$(cat $f | csvsql --query "SELECT SUM(cost) AS sum from stdin" | sed -n 2p)
+	echo $(date) ' - SUM OF COSTS in file : ' $f " : " $sum_costs_file  >> $logging_file
+}
+
+sum_costs_in_index() {
+	echo $(date) ' - SUM OF COSTS in index : BEGIN' >> $logging_file
+	sum_costs_index=$(set -x; curl --user $src_platform_user $src_platform_url/$src_index*/_search -d "{ \"size\": 0, \"query\": {\"bool\": {  \"filter\": [ {\"match\": { \"as_of_time\": \"$as_of_time\"}}, {\"match\": { \"as_of\": \"$as_of\"}} ] }} ,\"aggs\": { \"costs\" : { \"sum\" : { \"field\" : \"cost\" } }}}" -H"Content-Type: application/json" | jq -r ".aggregations.costs.value")
+	echo $(date) ' - SUM OF COSTS in index : ' $f " : " $sum_costs_index  >> $logging_file
+}
+
+post_to_monitoring_index() {
+        # we set the date before posting
+        date=$(date "+%Y-%m-%dT%H:%M:%S")
+
+        index_post_response=$(set -x; curl -XPOST -H"Content-Type: application/json" --user $monitoring_platform_user $monitoring_platform_url/$monitoring_index/$record_type -d "{ \"provider\": \"$provider\", \"date\": \"$date\", \"index\": \"$index\",\"file\": \"$f\",\"as_of\": \"$as_of\", \"as_of_time\": \"$as_of_time\", \"num_in_file\": $lines_in_files, \"num_in_index\": $qr, \"sum_cost_in_file\": $sum_costs_file, \"sum_cost_in_index\": $sum_costs_index}")
+
+}
+
+# Data quality variables
+sum_costs_file=0
+sum_costs_index=0
+
+# local information
+logging_file='/home/{{ data_provider }}/log/data_ingestion_monitoring.log'
+
+# monitored platform
+src_index='tpgbam_{{ depenvironment }}_{{ data_provider }}'
+src_platform_url='https://{{ target_url }}'
+src_platform_user='{{ target_user }}:{{ target_password }}'
+
+# monitoring platform
+monitoring_platform_url='https://{{ monitoring_url }}'
+monitoring_platform_user='{{ monitoring_user }}:{{ monitoring_password }}'
+
+# count lines in files
+lines_in_files=0
+
+# count records in index
+qr=''
+
+# define folder to monitor
+target_folder='/home/{{ data_provider }}/publish'
+
+as_of=''
+as_of_time=''
+date=''
+monitoring_index='monitoring_ingester_{{ data_provider }}'
+record_type='record_count_{{ data_provider }}'
+provider='{{ data_provider }}'
+index_post_response=''
+
+
+# infinit loop : restart every 5 seconds
+while :
+do
+        for f in $target_folder/*.csv
+        do
+                count_lines $f
+                lines_in_files=$((lines_in_files - 1))
+                echo $(date) ' - ' $f $lines_in_files >> $logging_file
+                parse_file_name $f
+
+                echo $(date) ' - ' $f $as_of >> $logging_file
+
+                echo $(date) ' - ' $f $as_of_time >> $logging_file
+
+                # check sums
+                # in file
+                sum_costs_in_file
+				# in index
+				sum_costs_in_index
+
+                check_ingested
+                echo $(date) ' - ' echo $f $qr; >> $logging_file
+
+                # get the current date
+                date=$(date "+%Y-%m-%dT%H:%M:%S")
+                echo $(date) ' - ' $date >> $logging_file
+                post_to_monitoring_index
+                echo $(date) ' - ' $index_post_response >> $logging_file
+        done
+echo $(date) ' - sleep 60' >> $logging_file
+echo $(date) '------------------------------' >> $logging_file
+sleep 60
+done
+

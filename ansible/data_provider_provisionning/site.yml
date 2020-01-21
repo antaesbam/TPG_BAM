@@ -1,4 +1,0 @@
--   hosts: "{{onhosts}}"
-    roles: 
-        -   "{{role}}"
-        

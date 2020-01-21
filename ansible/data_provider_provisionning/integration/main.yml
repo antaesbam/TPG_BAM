@@ -1,5 +1,0 @@
-all:
-    children:
-        tpgbam:
-            hosts:
-                tpgbam.antaes.ch

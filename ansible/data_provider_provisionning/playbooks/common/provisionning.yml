@@ -1,0 +1,30 @@
+---
+# file: playbooks/common/provisionning.yml
+
+- name: create the user in the filesystem
+    user:
+        name: "{{ data_provider }}"
+
+- name: create all default folders for user
+    file:
+        path: /home/{{ data_provider }}/{{ item }}
+        state: directory
+        owner: "{{ data_provider }}"
+        group: "{{ data_provider }}"
+        recurse: yes
+    with_items:
+      - ".ssh"
+      - "publish"
+      - "admin"
+      - "archive"
+      - "log"
+      - "integregistry"
+
+- name: create file authorized_keys in .ssh
+    file:
+        path: /home/{{ data_provider }}/.ssh/authorized_keys
+        state: touch
+        owner: "{{ data_provider }}"
+        group: "{{ data_provider }}"
+
+

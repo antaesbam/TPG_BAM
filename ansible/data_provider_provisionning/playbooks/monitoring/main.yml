@@ -1,0 +1,25 @@
+---
+# file: playbooks/monitoring/main.yml
+
+- hosts: tpgbam_servers
+  tasks:
+    - name: Deploy Monitoring script
+      include: deploy_script.yml data_provider={{ data_provider }}
+      with_items: "{{ data_providers }}"
+      tags:
+        - deploy
+        - script
+
+    - name: Deploy Monitoring service
+      include: deploy_service.yml data_provider={{ data_provider }}
+      with_items: "{{ data_providers }}"
+      tags:
+        - deploy
+        - service
+
+    - name: Enable Monitoring service
+      include: enable_service.yml data_provider={{ data_provider }}
+      with_items: "{{ data_providers }}"
+      tags:
+        - enable
+        - service

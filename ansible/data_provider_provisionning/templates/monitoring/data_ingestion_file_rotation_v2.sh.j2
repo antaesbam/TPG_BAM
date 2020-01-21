@@ -1,0 +1,147 @@
+#!/bin/bash
+# {{ ansible_managed }}
+# List files in the current folder
+# for each file, count lines and count ingested records
+# compair results between index and file to check if file was fully ingested
+# check also the file last modification date:
+# if last modification is more than 24 hour --> the file is archived
+# WARNING: to use this script, jq must be installed on the system
+
+# Utilities library **********************************
+
+# define the limit of time to check files
+define_time_limit() {
+        local ct=$(date +%s)
+        # local num_days_limit_seconds=$((num_days_limit * 3600 * 24))
+        # time_limit=$((ct - num_days_limit_seconds))
+        # try a time limit of 5 minutes
+        local limit_in_seconds=$((5 * 60))
+        time_limit=$((ct - limit_in_seconds))
+}
+
+# file management library ***************************
+# count lines in current file
+count_lines() {
+    local f=$1
+    # this is the return value, i.e. non local
+    lines_in_files=$(wc -l $f | sed 's/^\([0-9]*\).*$/\1/')
+}
+
+# gather from file : as_of & as_of_time
+parse_file_name() {
+    local f=$(basename "${1}")
+    echo $(date) ' - BASENAME:' $f >> $logging_file
+    as_of=`echo $f | cut -c 1-10`
+    as_of_time=`echo $f | cut -c 12-19`
+}
+
+# Check time limit for the current input file
+check_files_to_archive() {
+        local f=$1
+        local f_time=$(date -r $f +%s)
+        if ((time_limit > f_time));
+        then
+                echo $(date) ' - ' $time_limit 'greater' $f_time
+                file_to_archive=true
+        fi
+        echo $(date) ' - END FILE TO ARCHIVE:' $file_to_archive >> $logging_file
+}
+
+# archive input file
+transfert_to_archive_folder() {
+        local f=$archive_folder/`basename "${1}"`
+        # echo $(date) ' - CHECK FILE EXISTS:' $f >> $logging_file
+        if [ ! -f $f ]
+        then
+                echo $(date) ' - READY TO ARCHIVE FILE : ' $f >> $logging_file
+                `mv $1 $archive_folder/`
+        fi
+}
+
+# Index management library *************************
+
+# Check records already ingested for the current version
+check_ingested() {
+        lines_in_index=$(set -x; curl --user $src_platform_user $src_platform_url/$src_index*/_count -d "{ \"query\": {\"bool\": {  \"filter\": [ {\"match\": { \"as_of_time\": \"$as_of_time\"}}, {\"match\": { \"as_of\": \"$as_of\"}} ]} }}" -H"Content-Type: application/json" | jq -r ".count")
+}
+
+#local information
+logging_file='/home/{{ data_provider }}/log/data_ingestion_file_rotation.log'
+
+# cloud information
+# monitored platform
+src_index='tpgbam_{{ depenvironment }}_{{ data_provider }}'
+src_platform_url='https://{{ target_url }}'
+src_platform_user='{{ target_user }}:{{ target_password }}'
+
+
+# count lines in files
+lines_in_files=0
+
+# count records in index
+lines_in_index=''
+
+as_of=''
+as_of_time=''
+date=''
+monitoring_index='monitoring_ingester_{{ data_provider }}'
+record_type='record_count'
+provider='{{ data_provider }}'
+
+# define folder to monitor
+target_folder='/home/{{ data_provider }}/publish'
+# folder for archiving
+archive_folder='/home/{{ data_provider }}/archive'
+# define tim limit
+time_limit=0
+# number of days for time limit
+num_days_limit=1
+# is file ready for archiving
+file_to_archive=false
+
+
+# infinit loop : restart every 60 seconds
+while :
+do
+        # initialize time_limit for the current execution
+        define_time_limit
+        echo $(date) ' - ' $time_limit >> $logging_file
+        for f in $target_folder/*.csv
+        do
+                file_ref=$f
+                echo $(date) ' - file:' $file_ref >> $logging_file
+                # Check if file is holder than 24 hour
+                check_files_to_archive $file_ref
+                echo $(date) ' - file_to_archive:' $file_to_archive >> $logging_file
+                # if file is ready for archiving then we check integration in index
+                if $file_to_archive
+                then
+                        echo $(date) ' - file is ready for archiving:' $file_ref >> $logging_file
+                        # count line sin file
+                        count_lines $file_ref
+                        lines_in_files=$((lines_in_files - 1))
+                        echo $(date) ' - LINES IN FILE:' $file_ref $lines_in_files >> $logging_file
+                        parse_file_name $file_ref
+
+                        echo $(date) ' - FILE AS_OF:' $file_ref $as_of >> $logging_file
+
+                        echo $(date) ' - FILE AS_OF_TIME:' $file_ref $as_of_time >> $logging_file
+
+                        #count lines in index for file as_of - as_of_time
+                        check_ingested
+                        echo $(date) ' - LINE IN INDEX:' $file_ref $lines_in_index >> $logging_file
+                        if ((lines_in_index>=lines_in_files));
+                        then
+                                # send file to archive folder
+                                echo $(date) ' - ARCHIVE FILE:' $file_ref >> $logging_file
+                                transfert_to_archive_folder $file_ref
+                        fi
+                        # reset the flag for archiving
+                        file_to_archive=false
+                fi
+        done
+echo $(date) ' - sleep 60' >> $logging_file
+echo $(date) ' -----------------------------------------------------------------------' >> $logging_file
+sleep 60
+done
+

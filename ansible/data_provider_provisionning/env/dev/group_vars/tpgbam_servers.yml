@@ -1,0 +1,7 @@
+---
+# file: env/dev/group_vars/tpgbam_servers.yml
+
+data_providers:
+  - mnc
+  - scs
+  - sds

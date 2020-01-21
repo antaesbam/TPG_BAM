@@ -1,0 +1,25 @@
+---
+# file: playbooks/filebeat/main.yml
+
+- hosts: tpgbam_servers
+  tasks:
+    - name: Deploy Filebeat configuration
+      include: deploy_config.yml data_provider={{ data_provider }}
+      with_items: "{{ data_providers }}"
+      tags:
+        - deploy
+        - config
+
+    - name: Deploy Filebeat service
+      include: deploy_service.yml data_provider={{ data_provider }}
+      with_items: "{{ data_providers }}"
+      tags:
+        - deploy
+        - service
+
+    - name: Enable Filebeat service
+      include: enable_service.yml data_provider={{ data_provider }}
+      with_items: "{{ data_providers }}"
+      tags:
+        - enable
+        - service

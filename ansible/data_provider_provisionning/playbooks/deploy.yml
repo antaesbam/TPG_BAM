@@ -1,0 +1,22 @@
+---
+# file: playbooks/deploy.yml
+
+- hosts: all
+  connection: local
+  tasks:
+    - name: Assert required Environment variables
+      assert:
+        that:
+          - data_providers is defined
+
+- include: common/main.yml
+  tags:
+    - common
+
+- include: filebeat/main.yml
+  tags:
+    - filebeat
+
+- include: monitoring/main.yml
+  tags:
+    - monitoring
