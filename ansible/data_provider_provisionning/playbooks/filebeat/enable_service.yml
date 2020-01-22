@@ -3,6 +3,7 @@
 
 - name: Enable Filebeat service
   systemd:
-    name: filebeat.{{ data_provider }}.{{ depenvironment }}
+    name: filebeat.{{ data_provider }}.{{ env }}
     daemon_reload: true
     enabled: true
+    state: started
