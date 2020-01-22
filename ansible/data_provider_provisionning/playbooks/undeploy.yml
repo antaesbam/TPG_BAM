@@ -9,6 +9,8 @@
         that:
           - data_providers is defined
 
+- hosts: tpgbam_servers
+  tasks:
     - name: Stop Filebeat services
       systemd:
         name: "filebeat.{{ item }}.{{ env }}.service"
