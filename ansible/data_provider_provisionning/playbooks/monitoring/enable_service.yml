@@ -1,18 +1,16 @@
 ---
 # file: playbooks/monitoring/enable_service.yml
 
-- hosts: tpgbam_servers
-  tasks:
-    - name: Enable file rotation service
-      systemd:
-        name: "data.ingestion.file.rotation.{{ data_provider }}.{{ env }}"
-        daemon_reload: true
-        enabled: true
-        state: started
+- name: Enable file rotation service
+  systemd:
+    name: "data.ingestion.file.rotation.{{ data_provider }}.{{ env }}"
+    daemon_reload: true
+    enabled: true
+    state: started
 
-    - name: Enable data ingestion monitoring service
-      systemd:
-        name: "monitoring.ingester.data.{{ data_provider }}.{{ env }}"
-        daemon_reload: true
-        enabled: true
-        state: started
+- name: Enable data ingestion monitoring service
+  systemd:
+    name: "monitoring.ingester.data.{{ data_provider }}.{{ env }}"
+    daemon_reload: true
+    enabled: true
+    state: started

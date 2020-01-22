@@ -1,11 +1,9 @@
 ---
 # file: playbooks/filebeat/deploy_config.yml
 
-- hosts: tpgbam_servers
-  tasks:
-    - name: Deploy Filebeat configuration
-      template:
-        src: "../../templates/filebeat/filebeat.j2"
-        dest: "/etc/filebeat/filebeat.{{ data_provider }}.{{ env }}.yml"
-        owner: root
-        group: root
+- name: Deploy Filebeat configuration
+  template:
+    src: "../../templates/filebeat/filebeat.j2"
+    dest: "/etc/filebeat/filebeat.{{ data_provider }}.{{ env }}.yml"
+    owner: root
+    group: root

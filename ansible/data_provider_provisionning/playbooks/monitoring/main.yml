@@ -4,22 +4,28 @@
 - hosts: tpgbam_servers
   tasks:
     - name: Deploy Monitoring script
-      include: deploy_script.yml data_provider={{ data_provider }}
+      include: deploy_script.yml data_provider={{ data_provider_item }}
       with_items: "{{ data_providers }}"
+      loop_control:
+        loop_var: data_provider_item
       tags:
         - deploy
         - script
 
     - name: Deploy Monitoring service
-      include: deploy_service.yml data_provider={{ data_provider }}
+      include: deploy_service.yml data_provider={{ data_provider_item }}
       with_items: "{{ data_providers }}"
+      loop_control:
+        loop_var: data_provider_item
       tags:
         - deploy
         - service
 
     - name: Enable Monitoring service
-      include: enable_service.yml data_provider={{ data_provider }}
+      include: enable_service.yml data_provider={{ data_provider_item }}
       with_items: "{{ data_providers }}"
+      loop_control:
+        loop_var: data_provider_item
       tags:
         - enable
         - service
