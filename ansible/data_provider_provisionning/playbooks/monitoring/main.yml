@@ -1,0 +1,46 @@
+---
+# file: playbooks/monitoring/main.yml
+
+- hosts: tpgbam_servers
+  connection: local
+  tasks:
+    - name: Assert required Environment variables
+      assert:
+        that:
+          - target_url is defined
+          - target_user is defined
+          - target_password is defined
+          - target_cloudid is defined
+          - monitoring_url is defined
+          - monitoring_user is defined
+          - monitoring_password is defined
+          - monitoring_cloudid is defined
+
+- hosts: tpgbam_servers
+  tasks:
+    - name: Deploy Monitoring script
+      include: deploy_script.yml data_provider={{ data_provider_item }}
+      with_items: "{{ data_providers }}"
+      loop_control:
+        loop_var: data_provider_item
+      tags:
+        - deploy
+        - script
+
+    - name: Deploy Monitoring service
+      include: deploy_service.yml data_provider={{ data_provider_item }}
+      with_items: "{{ data_providers }}"
+      loop_control:
+        loop_var: data_provider_item
+      tags:
+        - deploy
+        - service
+
+    - name: Enable Monitoring service
+      include: enable_service.yml data_provider={{ data_provider_item }}
+      with_items: "{{ data_providers }}"
+      loop_control:
+        loop_var: data_provider_item
+      tags:
+        - enable
+        - service

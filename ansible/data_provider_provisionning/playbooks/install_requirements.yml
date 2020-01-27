@@ -1,0 +1,13 @@
+---
+# file: install_requirements.yml
+
+- hosts: localhost
+  tasks:
+    - name: "Remove roles directory"
+      file:
+        path: ../roles
+        state: absent
+
+    - name: "Install requirements with Ansible Galaxy"
+      local_action:
+        command ansible-galaxy install -r ../requirements.yml --roles-path ../roles --force

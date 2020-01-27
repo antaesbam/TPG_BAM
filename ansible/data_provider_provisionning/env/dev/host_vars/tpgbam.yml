@@ -1,0 +1,5 @@
+ ---
+# file: env/dev/host_vars/tpgbam.yml
+
+ansible_host: 159.100.243.248
+ansible_user: root

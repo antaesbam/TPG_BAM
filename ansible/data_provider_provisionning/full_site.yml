@@ -1,7 +1,0 @@
--   hosts: "{{onhosts}}"
-    roles: 
-        - common
-        - deploy_filebeat
-        - deploy_monitoring
-        - enable_monitoring
-        

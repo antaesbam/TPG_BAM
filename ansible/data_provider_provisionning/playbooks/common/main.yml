@@ -1,0 +1,12 @@
+---
+# file: playbooks/common/main.yml
+
+- hosts: tpgbam_servers
+  tasks:
+    - name: Data Provider provisionning
+      include: provisionning.yml data_provider={{ data_provider_item }}
+      with_items: "{{ data_providers }}"
+      loop_control:
+        loop_var: data_provider_item
+      tags:
+        - provisionning

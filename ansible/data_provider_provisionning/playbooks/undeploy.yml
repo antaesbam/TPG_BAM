@@ -1,0 +1,83 @@
+---
+# file: playbooks/deploy.yml
+
+- hosts: all
+  connection: local
+  tasks:
+    - name: Assert required Environment variables
+      assert:
+        that:
+          - data_providers is defined
+
+- hosts: tpgbam_servers
+  tasks:
+    - name: Stop Filebeat services
+      systemd:
+        name: "filebeat.{{ item }}.{{ env }}.service"
+        daemon_reload: true
+        enabled: false
+        state: stopped
+      with_items: "{{ data_providers }}"
+      tags:
+        - filebeat
+
+    - name: Remove Filebeat services
+      file:
+        path: "/etc/systemd/system/filebeat.{{ item }}.{{ env }}.service"
+        state: absent
+      with_items: "{{ data_providers }}"
+      tags:
+        - filebeat
+
+    - name: Remove Filebeat config files
+      file:
+        path: "/etc/filebeat/filebeat.{{ item }}.{{ env }}.yml"
+        state: absent
+      with_items: "{{ data_providers }}"
+      tags:
+        - filebeat
+
+    - name: Stop file rotation service
+      systemd:
+        name: "data.ingestion.file.rotation.{{ item }}.{{ env }}"
+        daemon_reload: true
+        enabled: false
+        state: stopped
+      with_items: "{{ data_providers }}"
+      tags:
+        - monitoring
+
+    - name: Stop data ingestion monitoring service
+      systemd:
+        name: "monitoring.ingester.data.{{ item }}.{{ env }}"
+        daemon_reload: true
+        enabled: false
+        state: stopped
+      with_items: "{{ data_providers }}"
+      tags:
+        - monitoring
+
+    - name: Remove file rotation services
+      file:
+        path: "/etc/systemd/system/data.ingestion.file.rotation.{{ item }}.{{ env }}.service"
+        state: absent
+      with_items: "{{ data_providers }}"
+      tags:
+        - monitoring
+
+    - name: Remove data ingestion monitoring services
+      file:
+        path: "/etc/systemd/system/monitoring.ingester.data.{{ item }}.{{ env }}.service"
+        state: absent
+      with_items: "{{ data_providers }}"
+      tags:
+        - monitoring
+
+    - name: Remove data provider user account and directory
+      user:
+        name: "{{ item }}"
+        state: absent
+        remove: yes
+      with_items: "{{ data_providers }}"
+      tags:
+        - common

@@ -1,0 +1,6 @@
+# file: requirements.yml
+
+# from galaxy
+
+- src: geerlingguy.filebeat
+  name: filebeat

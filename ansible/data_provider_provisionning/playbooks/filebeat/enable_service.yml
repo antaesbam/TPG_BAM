@@ -1,0 +1,9 @@
+---
+# file: playbooks/filebeat/enable_service.yml
+
+- name: Enable Filebeat service
+  systemd:
+    name: filebeat.{{ data_provider }}.{{ env }}
+    daemon_reload: true
+    enabled: true
+    state: started

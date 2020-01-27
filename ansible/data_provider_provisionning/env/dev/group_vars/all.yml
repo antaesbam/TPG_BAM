@@ -1,0 +1,4 @@
+---
+# file: env/dev/group_vars/all.yml
+
+env: dev

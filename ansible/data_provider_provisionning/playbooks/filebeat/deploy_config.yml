@@ -1,0 +1,16 @@
+---
+# file: playbooks/filebeat/deploy_config.yml
+
+- name: Ensure Filebeat directory exists
+  file:
+    path: "/etc/filebeat"
+    state: directory
+    owner: root
+    group: root
+
+- name: Deploy Filebeat configuration
+  template:
+    src: "../../templates/filebeat/filebeat.j2"
+    dest: "/etc/filebeat/filebeat.{{ data_provider }}.{{ env }}.yml"
+    owner: root
+    group: root
