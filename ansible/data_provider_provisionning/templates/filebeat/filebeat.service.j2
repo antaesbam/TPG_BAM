@@ -6,7 +6,7 @@ Wants=network-online.target
 After=network-online.target
 
 [Service]
-ExecStart=/usr/share/filebeat/bin/filebeat -e -c /etc/filebeat/filebeat.{{ data_provider }}.{{ depenvironment }}.yml -path.home /home/{{ data_provider }} -path.config /etc/filebeat -path.data /home/{{ data_provider }}/integregistry -path.logs /home/{{ data_provider }}/log/ -d "elasticsearch"
+ExecStart=/usr/share/filebeat/bin/filebeat -e -c /etc/filebeat/filebeat.{{ data_provider }}.{{ env }}.yml -path.home /home/{{ data_provider }} -path.config /etc/filebeat -path.data /home/{{ data_provider }}/integregistry -path.logs /home/{{ data_provider }}/log/ -d "elasticsearch"
 Restart=always
 
 [Install]

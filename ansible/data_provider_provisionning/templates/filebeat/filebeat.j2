@@ -149,12 +149,12 @@ output.elasticsearch:
 
   # Optional protocol and basic auth credentials.
   protocol: "https"
-  pipeline: "tpgbam_{{ data_provider }}_{{ depenvironment }}_pipeline"
+  pipeline: "tpgbam_{{ data_provider }}_{{ env }}_pipeline"
   template.name: "filebeat"
   template.path: "filebeat.template.json"
-  username : {{ target_user }}
-  password: {{ target_password }}
-  cloudid: {{ target_cloudid }}
+  username : "{{ target_user }}"
+  password: "{{ target_password }}"
+  cloudid: "{{ target_cloudid }}"
 
 #----------------------------- Logstash output --------------------------------
 #output.logstash:
