@@ -2,6 +2,21 @@
 # file: playbooks/filebeat/main.yml
 
 - hosts: tpgbam_servers
+  connection: local
+  tasks:
+    - name: Assert required Environment variables
+      assert:
+        that:
+          - target_url is defined
+          - target_user is defined
+          - target_password is defined
+          - target_cloudid is defined
+
+- hosts: tpgbam_servers
+  roles:
+    - filebeat
+
+- hosts: tpgbam_servers
   tasks:
     - name: Deploy Filebeat configuration
       include: deploy_config.yml data_provider={{ data_provider_item }}
